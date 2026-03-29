@@ -165,6 +165,7 @@ The project is in a good hackathon state when:
 | Final polish | Not started |
 
 **Open Blockers:**
+- The deployed Gemini API key is currently quota-blocked, so the live pipeline returns 429/quota errors until quota is restored or the key is replaced
 - File selection is now visible in the intake flow, but file contents are not uploaded or parsed yet
 - The most reliable demo path is still the text-first seeded/live complaint flow
 

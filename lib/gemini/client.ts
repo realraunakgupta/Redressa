@@ -75,7 +75,7 @@ export async function generateJSON<T = Record<string, unknown>>(options: {
 
   try {
     return JSON.parse(text) as T;
-  } catch (error) {
+  } catch {
     // Try extracting JSON from markdown code blocks
     const jsonMatch = text.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
     if (jsonMatch) {

@@ -141,6 +141,31 @@ export async function POST(request: NextRequest) {
     const message = error instanceof Error ? error.message : "Unknown error";
     console.error("[Redressa] Pipeline error:", message);
 
+    if (
+      message.includes("429 Too Many Requests") ||
+      message.toLowerCase().includes("quota exceeded")
+    ) {
+      return NextResponse.json(
+        {
+          error: "Gemini quota exceeded",
+          detail:
+            "The configured Gemini API key has exhausted its current quota. The live pipeline cannot complete until quota is restored or the key is replaced.",
+        },
+        { status: 503 }
+      );
+    }
+
+    if (message.includes("ModelNotFound")) {
+      return NextResponse.json(
+        {
+          error: "Gemini model unavailable",
+          detail:
+            "The configured Gemini model is not available for this API key or SDK version. Switch to a supported model before retrying.",
+        },
+        { status: 503 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Pipeline failed", detail: message },
       { status: 500 }
