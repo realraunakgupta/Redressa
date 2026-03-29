@@ -36,7 +36,7 @@ export async function generateText(options: {
 }): Promise<string> {
   const client = getClient();
   const model = client.getGenerativeModel({
-    model: "gemini-2.0-flash",
+    model: "gemini-3.0-flash",
     systemInstruction: options.systemInstruction,
     generationConfig: {
       temperature: options.temperature ?? 0.3,
@@ -61,7 +61,7 @@ export async function generateJSON<T = Record<string, unknown>>(options: {
 }): Promise<T> {
   const client = getClient();
   const model = client.getGenerativeModel({
-    model: "gemini-2.0-flash",
+    model: "gemini-3.0-flash",
     systemInstruction: options.systemInstruction,
     generationConfig: {
       temperature: options.temperature ?? 0.1,
@@ -75,11 +75,17 @@ export async function generateJSON<T = Record<string, unknown>>(options: {
 
   try {
     return JSON.parse(text) as T;
-  } catch {
+  } catch (error) {
     // Try extracting JSON from markdown code blocks
     const jsonMatch = text.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
     if (jsonMatch) {
-      return JSON.parse(jsonMatch[1]) as T;
+      try {
+        return JSON.parse(jsonMatch[1]) as T;
+      } catch (innerError) {
+        throw new Error(
+          `[Redressa] Failed to parse extracted Gemini JSON format. Text: ${text.slice(0, 200)} | Inner Error: ${innerError instanceof Error ? innerError.message : String(innerError)}`
+        );
+      }
     }
     throw new Error(`[Redressa] Failed to parse Gemini JSON response: ${text.slice(0, 200)}`);
   }
