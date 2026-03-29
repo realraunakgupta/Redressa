@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { isSupabaseConfigured, isGeminiConfigured } from "@/lib/env";
 
 /**
@@ -15,14 +17,12 @@ export default function StatusPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-6">
       <div className="w-full max-w-lg">
-        {/* Header */}
         <h1 className="text-3xl font-bold text-neutral-50">
           Redressa <span className="text-primary-400">AI</span>
           <span className="ml-3 text-sm font-normal text-neutral-500">v0.1.0</span>
         </h1>
         <p className="mt-2 text-sm text-neutral-500">Deployment Status</p>
 
-        {/* Overall status */}
         <div className="mt-8 rounded-xl border border-neutral-800 bg-neutral-900/50 p-6">
           <div className="flex items-center gap-3">
             <span
@@ -35,7 +35,6 @@ export default function StatusPage() {
             </span>
           </div>
 
-          {/* Service checks */}
           <div className="mt-6 space-y-4">
             <ServiceCheck
               name="Supabase (Database)"
@@ -55,20 +54,19 @@ export default function StatusPage() {
           </div>
         </div>
 
-        {/* Quick links */}
         <div className="mt-6 flex gap-4 text-sm">
-          <a
+          <Link
             href="/"
-            className="text-primary-400 hover:text-primary-300 transition-colors"
+            className="text-primary-400 transition-colors hover:text-primary-300"
           >
-            ← Home
-          </a>
-          <a
+            Home
+          </Link>
+          <Link
             href="/api/health"
-            className="text-primary-400 hover:text-primary-300 transition-colors"
+            className="text-primary-400 transition-colors hover:text-primary-300"
           >
-            API Health →
-          </a>
+            API Health
+          </Link>
         </div>
       </div>
     </main>
@@ -88,9 +86,7 @@ function ServiceCheck({
     <div className="flex items-start justify-between gap-4">
       <div>
         <p className="text-sm font-medium text-neutral-200">{name}</p>
-        {!configured && (
-          <p className="mt-0.5 text-xs text-neutral-500">{hint}</p>
-        )}
+        {!configured && <p className="mt-0.5 text-xs text-neutral-500">{hint}</p>}
       </div>
       <span
         className={`mt-0.5 shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${

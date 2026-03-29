@@ -156,6 +156,27 @@ export async function getCaseEvents(caseId: string): Promise<CaseEventRow[]> {
   return (data as CaseEventRow[]) ?? [];
 }
 
+export async function getLatestCaseEventByType(
+  caseId: string,
+  eventType: string
+): Promise<CaseEventRow | null> {
+  const supabase = createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("case_events")
+    .select("*")
+    .eq("case_id", caseId)
+    .eq("event_type", eventType)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`[Redressa] Failed to get latest case event: ${error.message}`);
+  }
+
+  return (data as CaseEventRow) ?? null;
+}
+
 // ---- Policy Chunks ----
 
 export async function getPolicyChunks(options: {

@@ -1,0 +1,9 @@
+From: IndiGo Customer Service <customer.relations@goindigo.in>
+To: passenger@example.com
+Date: May 15, 2026
+Subject: Urgent: Flight Cancellation 6E-401
+
+Dear Passenger,
+We regret to inform you that your flight 6E-401 from Delhi to Mumbai scheduled for today has been cancelled due to operational reasons. 
+As per our records, you hold PNR-WXY789. We will initiate a full refund of INR 8500 right away which should reach you within the next 15 days as per our policy.
+We apologize for the inconvenience caused.

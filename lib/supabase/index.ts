@@ -22,6 +22,7 @@ export {
   getCaseFiles,
   addCaseEvent,
   getCaseEvents,
+  getLatestCaseEventByType,
   getPolicyChunks,
   addGeneratedOutput,
   getCaseOutputs,

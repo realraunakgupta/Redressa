@@ -4,7 +4,7 @@
 - Name: Redressa AI
 - Hackathon: Protex Hack-2-Win Hackathon 2026
 - Track: Track 2 - Agentic AI / AI Workflows
-- Status: Deployment-ready; push to GitHub and import in Vercel
+- Status: Phase 1 stabilization complete (text-first demo-safe baseline); ready for optional Phase 2 upgrades
 
 ## One-line problem statement
 - Redressa AI helps Indian consumers convert failed refunds, damaged deliveries, and travel disruption complaints into grounded escalation-ready claim packs without manually decoding policies, regulations, and escalation paths.
@@ -150,25 +150,23 @@ The project is in a good hackathon state when:
 
 | Item | Status |
 |------|--------|
-| **Current Phase** | Deployment-ready; awaiting Vercel import |
-| Source-of-truth files | ✅ Done |
-| Validation notes | ✅ Done |
-| Scaffold | ✅ Done |
-| Backend schema & services | ✅ Done |
-| Early deployment | ✅ Code ready (manual Vercel import needed) |
-| Policy corpus & retrieval | 🔲 Not started |
-| Core agent pipeline | 🔲 Not started |
-| Connected UI | 🔲 Not started |
-| End-to-end wiring & demo mode | 🔲 Not started |
-| Phase 1 stabilization | 🔲 Not started |
-| Phase 2 upgrades | 🔲 Not started |
-| Final polish | 🔲 Not started |
+| **Current Phase** | Phase 1 stabilization complete |
+| Source-of-truth files | Done |
+| Validation notes | Done |
+| Scaffold | Done |
+| Backend schema & services | Done |
+| Early deployment | Done |
+| Policy corpus & retrieval | Done |
+| Core agent pipeline | Done |
+| Connected UI | Done |
+| End-to-end wiring & demo mode | Done |
+| Phase 1 stabilization | Done |
+| Phase 2 upgrades | Not started |
+| Final polish | Not started |
 
 **Open Blockers:**
-- Must run `supabase/schema.sql` in Supabase SQL Editor before DB queries work
-- Must push to GitHub and import in Vercel (see `DEPLOYMENT.md`)
-- Gemini API key needed before pipeline step (step 1.6)
+- File selection is now visible in the intake flow, but file contents are not uploaded or parsed yet
+- The most reliable demo path is still the text-first seeded/live complaint flow
 
 **Next Step:**
-- Push to GitHub, deploy on Vercel, verify at `/status` and `/api/health`
-- Then: Policy corpus & retrieval setup (Prompt 6)
+- Phase 2 Upgrades (Prompt 11)
