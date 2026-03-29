@@ -1,0 +1,176 @@
+Act as an elite hackathon strategist, AI systems architect, and judge.
+
+We are a team of 4 beginner developers participating in **Protex Hack-2-Win Hackathon 2026**.
+
+---
+
+## 🧠 Hackathon Context
+
+* Timeline:
+
+  * Idea + Prototype + PPT submission deadline: **1 April 2026**
+  * Mentor Round: 4–5 April (online demo + Q&A)
+  * Grand Finale: 6 April (offline at Microsoft Office, Noida)
+
+* Deliverables required:
+
+  * A working or partially working prototype
+  * A 5–6 slide PPT (excluding title and thank-you slides)
+  * Live demo + GitHub repository
+
+* Evaluation Criteria:
+
+  * Innovation & Creativity (25%)
+  * Technical Execution (25%)
+  * Problem–Solution Fit (20%)
+  * Impact & Scalability (20%)
+  * Presentation & Demo (10%)
+
+* Rules:
+
+  * Only one submission per team
+  * All work must be original (no plagiarism)
+  * The project must be built during the hackathon
+  * All team members must attend the finale if shortlisted
+
+---
+
+## 🎯 Preferred Domains (Strict Alignment Required)
+
+### Agentic AI / AI Workflows
+
+* Build autonomous systems capable of multi-step reasoning and real-world task execution
+* Examples: task automation agents, research agents, workflow orchestration systems
+
+### Personal Finance & Wealth (Gen Z Focus)
+
+* Build tools that help young users make smarter financial decisions
+* Examples: budgeting tools, investment assistants, financial planning systems
+
+---
+
+## 💡 Optional Reference Problem (NOT a constraint)
+
+You may optionally draw inspiration from this problem statement if relevant:
+
+* Problem: Traditional fraud detection systems generate high false-positive rates
+* Objective: Build a real-time fraud detection system using behavioral and contextual data
+* Possible directions:
+
+  * Beginner: transaction classification using ML
+  * Advanced: graph-based fraud detection with explainability
+
+⚠️ This is only for inspiration. You are free to propose completely different ideas if stronger.
+
+---
+
+## ⚙️ Team Constraints
+
+* Beginner-level developers
+* Using vibecoding and AI-assisted development tools (e.g., Claude Code, Codex, n8n, Supabase, Lovable, Figma, Stitch, etc.)
+* Limited time (~10 days)
+* Must be realistic to prototype but appear highly advanced
+
+⚠️ Tooling is flexible. You may introduce any additional vibecoding, low-code, or developer tools if they improve development speed, system capability, or demo quality.
+
+---
+
+## ⚠️ Strategy Requirements
+
+* Optimize for:
+
+  * Demo impact (VERY IMPORTANT)
+  * Perceived intelligence of the system
+  * Strong alignment with evaluation criteria
+
+* Use APIs, workflows, and existing tools instead of building complex systems from scratch
+
+* Avoid generic chatbot ideas
+
+* The system must demonstrate **multi-step autonomous behavior**
+
+---
+
+# 🔹 Step 1: Generate 4–5 High-Impact Ideas
+
+For each idea:
+
+* Problem (specific, real-world)
+* Solution (clear product behavior)
+* Agent behavior (step-by-step autonomous actions)
+* Why it scores high on evaluation criteria
+* MVP scope (buildable in ~10 days)
+* Suggested tech approach (you may use our tools or introduce better alternatives if needed)
+
+---
+
+# 🔹 Step 2: Evaluate Using Judging Criteria
+
+Rank each idea explicitly based on:
+
+* Innovation (25%)
+* Technical Execution (25%)
+* Problem–Solution Fit (20%)
+* Impact & Scalability (20%)
+* Demo/Presentation (10%)
+
+Eliminate weaker ideas clearly.
+
+---
+
+# 🔹 Step 3: Select ONE Best Idea
+
+Provide deep breakdown:
+
+## Product
+
+* One-line concept
+* Core features (max 5)
+
+## Agent System (CRITICAL)
+
+* Trigger
+* Step-by-step reasoning + actions
+* Tools/APIs used at each step
+* What makes it autonomous (not scripted)
+
+## System Architecture (Simple but impressive)
+
+* Frontend (Lovable / React / Stitch or any suitable UI tool)
+* Backend (n8n workflows / APIs or any orchestration/backend tool)
+* Database (Supabase or any simple managed database)
+* AI layer (LLMs + tool calling)
+
+⚠️ Tool choice is flexible. Select tools that maximize speed, simplicity, and demo impact. Do not restrict yourself to the listed tools.
+
+## User Flow
+
+* Step-by-step experience
+
+## MVP Strategy
+
+* What must be built
+* What can be simulated/faked
+
+## Demo Plan (VERY IMPORTANT)
+
+* Exact demo sequence
+* Key “wow moment”
+
+## Risks + Smart Shortcuts
+
+* Where complexity can be reduced
+* How to still appear advanced
+
+---
+
+# 🔹 Step 4: Pitch Optimization
+
+* Project name
+* 1-line pitch
+* 30-second pitch
+* PPT structure aligned with evaluation criteria
+
+---
+
+Be decisive and strategic. Optimize for winning based on judging criteria, not just building functionality.

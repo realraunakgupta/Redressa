@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+/* ============================================
+   Redressa AI - Design Tokens
+   ============================================
+   These will be expanded during the UI build phase.
+   For now, just set up the base layer.
+   ============================================ */
+
+@theme {
+  /* Primary - Deep indigo for trust and authority */
+  --color-primary-50: #eef2ff;
+  --color-primary-100: #e0e7ff;
+  --color-primary-200: #c7d2fe;
+  --color-primary-300: #a5b4fc;
+  --color-primary-400: #818cf8;
+  --color-primary-500: #6366f1;
+  --color-primary-600: #4f46e5;
+  --color-primary-700: #4338ca;
+  --color-primary-800: #3730a3;
+  --color-primary-900: #312e81;
+
+  /* Neutral - Slate for text and backgrounds */
+  --color-neutral-50: #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
+  --color-neutral-950: #020617;
+
+  /* Accent - Amber for warnings and highlights */
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+
+  /* Success / Error */
+  --color-success-500: #22c55e;
+  --color-error-500: #ef4444;
+
+  /* Font family */
+  --font-sans: "Segoe UI", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --font-mono: Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Base resets */
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-neutral-950);
+  color: var(--color-neutral-100);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

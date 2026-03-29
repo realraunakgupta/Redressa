@@ -1,0 +1,345 @@
+Redressa AI
+
+Final rebuild brief
+
+This is the final source-of-truth idea brief for the next rebuild.
+
+Previous working title:
+- Consumer Claims Agent
+
+New product name:
+- Redressa AI
+
+Why this name:
+- more distinctive than Consumer Claims Agent
+- still clearly tied to consumer redressal
+- broad enough to cover both the hackathon MVP and later expansion
+- sounds like a product, not a generic project description
+
+1. Final one-line problem statement
+
+Redressa AI helps Indian consumers convert failed refunds, damaged deliveries, and travel disruption complaints into grounded escalation-ready claim packs without manually decoding policies, regulations, and escalation paths.
+
+2. Final one-line solution statement
+
+Redressa AI is an agentic consumer redressal workflow that ingests messy evidence, extracts the facts, compares them against company policy and applicable rules, selects the best escalation route, and generates action-ready complaint outputs.
+
+3. Final product definition
+
+Redressa AI is not a generic chatbot and not an AI lawyer.
+
+It is an execution-oriented grievance-resolution system that:
+- accepts complaint details and evidence
+- extracts structured facts from that evidence
+- reconstructs the complaint timeline
+- retrieves the relevant company policy and external regulatory guidance
+- compares the facts against those sources
+- determines the best escalation path
+- generates grounded complaint-ready outputs for user review
+
+The product should feel like a hybrid between:
+- a consumer-facing claims assistant
+- a serious analyst console with visible agent activity
+
+4. Core user and first use cases
+
+Primary user:
+- a digitally active Indian consumer who already failed at first-line support and needs a structured escalation path
+
+Best first complaint categories:
+- aviation: flight cancellation, delay, refund, or compensation disputes
+- e-commerce: damaged, defective, wrong, or delayed item disputes
+
+5. Final merged idea lineage
+
+This version combines the strongest parts of the earlier variants.
+
+From ClaimPilot:
+- strong demo-friendly evidence-to-escalation workflow
+- visible multi-step agent behavior
+- complaint evidence intake and structured escalation-pack generation
+
+From AutoClaim_Pilot:
+- safer merged product framing between autonomy and buildability
+- cleaner execution-oriented workflow identity
+- policy lookup plus escalation-route selection as the center of the experience
+
+From Autoclaim_ai:
+- stronger regulation-aware reasoning
+- better contact and escalation-path identification
+- richer administrative outputs such as notices and escalation messages
+
+From Advocate_AI:
+- deeper comparative reasoning between company position and regulatory context
+- stronger evidence-pack concept
+- denial-reason extraction from support communication
+- stronger long-term legal-tech expansion path
+
+6. Final build philosophy
+
+This rebuild should follow one strict rule:
+
+Each phase must be independently demoable and defensible.
+
+That means:
+- Phase 1 must already be enough to present as a real hackathon project
+- Phase 2 should make it feel smarter and more polished
+- Phase 3 should add advanced capability only if the core system is already stable
+
+If time runs out early, the project should still remain credible and competitive.
+
+7. Phase roadmap
+
+Phase 1: Winning-core MVP
+
+This phase alone should already be good enough to demo and defend in a hackathon.
+
+Must include:
+- complaint intake with evidence upload
+- extraction of core facts such as merchant or airline, order ID or PNR, amount, issue type, and timeline
+- curated company policy and regulation retrieval
+- grounded claim evaluation
+- escalation route recommendation
+- visible Agent Activity
+- generated outputs:
+  - case summary
+  - grievance email draft
+  - escalation note
+  - evidence checklist
+  - evidence-pack preview
+
+Recommended first verticals:
+- IndiGo flight cancellation or refund dispute
+- Flipkart damaged or defective goods
+
+Why this phase is enough:
+- clearly fits Track 2
+- shows multi-step autonomous behavior
+- shows real user value
+- can be explained simply
+- is stable enough for a live or seeded demo
+
+If forced to stop here:
+- the project is still presentable
+- the demo story remains strong
+- this should still be treated as a valid submission candidate
+
+Phase 2: Intelligence and trust upgrade
+
+Add these only after Phase 1 works end-to-end.
+
+Add:
+- richer policy-vs-regulation comparison
+- denial-reason extraction from support emails and chats
+- better complaint classification and routing
+- real screenshot and image understanding
+- better escalation target selection such as grievance cell, nodal officer, or regulator path
+- improved citation UX:
+  - source cards
+  - clearer section labels
+  - highlighted evidence-backed excerpts
+- better evidence-pack export and presentation quality
+- stronger policy ingestion and metadata structure
+
+Why this phase matters:
+- increases perceived intelligence
+- improves trust and explainability
+- makes the system feel more finished without changing the core product
+
+If forced to stop in the middle of this phase:
+- keep the parts that improve explanation and visible reasoning first
+- citation quality and escalation clarity matter more than hidden backend sophistication
+
+Phase 3: Advanced workflow expansion
+
+Add these only if the core product is already stable.
+
+Add:
+- approval-gated outbound email sending
+- formal PDF evidence-pack export
+- broader complaint categories such as subscriptions, telecom, and digital-service disputes
+- stronger retrieval stack for larger policy corpora, including embeddings or vector search where useful
+- controlled policy refresh and background sync instead of relying on demo-time live scraping
+- optional browser automation or form autofill for a very narrow and stable flow only
+- optional external orchestration such as n8n if the product grows into a multi-workflow platform
+- enterprise-grade OCR such as Textract if document variability becomes a real problem
+
+Why this phase exists:
+- these are valid long-term features
+- they were included in earlier research for production realism and long-term scale
+- they are not required to prove the concept in the hackathon
+
+8. Explicit roadmap for every previously removed feature
+
+The following features were removed from the earlier hackathon MVP for reliability reasons, but they are now explicitly preserved in the roadmap.
+
+1. n8n orchestration
+- Why it was included originally:
+  - visually impressive workflow orchestration
+  - useful for long-running workflows and external integrations
+- Why it was removed from the first build:
+  - too many moving parts for a beginner team
+  - harder to debug than an in-app typed pipeline
+- Where it belongs now:
+  - Phase 3, only if the product expands beyond one contained application workflow
+
+2. AWS Textract or enterprise OCR
+- Why it was included originally:
+  - strong OCR for messy or inconsistent documents
+  - useful for production-grade document handling
+- Why it was removed from the first build:
+  - unnecessary cloud complexity for controlled demo files
+  - more integration overhead than value for a hackathon MVP
+- Where it belongs now:
+  - Phase 3, if the product begins handling noisy scans and real-world document diversity
+
+3. Mandatory vector RAG or pgvector-first retrieval
+- Why it was included originally:
+  - scalable retrieval for larger knowledge bases
+  - stronger semantic search on large policy corpora
+- Why it was removed from the first build:
+  - overkill for only a few curated policies
+  - deterministic retrieval is easier to trust during a hackathon
+- Where it belongs now:
+  - Phase 3, once the policy corpus grows beyond a small curated set
+
+4. Outbound email sending
+- Why it was included originally:
+  - looks highly autonomous
+  - brings the workflow closer to real-world execution
+- Why it was removed from the first build:
+  - introduces permissions, delivery, and error-handling complexity
+  - not needed to prove the value of the system
+- Where it belongs now:
+  - Phase 3, only behind explicit user approval
+
+5. Browser automation and live form autofill
+- Why it was included originally:
+  - very high demo wow factor
+  - visibly “agentic” in a theatrical sense
+- Why it was removed from the first build:
+  - extremely brittle
+  - too likely to fail under real demo conditions
+- Where it belongs now:
+  - Phase 3, and only for one very narrow stable workflow with a non-essential role in the demo
+
+6. Live web scraping dependency
+- Why it was included originally:
+  - suggests autonomy and freshness
+  - can support broader policy discovery
+- Why it was removed from the first build:
+  - unreliable during demos
+  - adds latency and failure points
+- Where it belongs now:
+  - Phase 3, but as controlled policy refresh or background syncing, not as live demo dependency
+
+7. Better evidence-pack export
+- Why it was included originally:
+  - strong visible artifact
+  - practical user value
+- Why it was removed from the first build:
+  - lower priority than getting the reasoning flow working
+- Where it belongs now:
+  - Phase 2 first, with polished PDF export in Phase 3
+
+8. Better citation UX
+- Why it was included originally:
+  - improves trust and perceived rigor
+  - makes the system’s grounding obvious to judges
+- Why it was removed from the first build:
+  - secondary to getting the pipeline working
+- Where it belongs now:
+  - Phase 2
+
+9. Real image and screenshot extraction
+- Why it was included originally:
+  - makes the workflow more realistic
+  - allows chat screenshots and damaged-item images to be processed directly
+- Why it was removed from the first build:
+  - added model complexity for limited initial need
+- Where it belongs now:
+  - Phase 2
+
+10. Smarter complaint classification
+- Why it was included originally:
+  - makes the workflow feel less rule-based
+  - supports better routing and scaling
+- Why it was removed from the first build:
+  - basic routing is enough for a narrow MVP
+- Where it belongs now:
+  - Phase 2
+
+11. Better escalation target selection
+- Why it was included originally:
+  - improves real-world usefulness
+  - creates a stronger action plan
+- Why it was removed from the first build:
+  - secondary to proving the core workflow
+- Where it belongs now:
+  - Phase 2
+
+12. Stronger policy ingestion and metadata
+- Why it was included originally:
+  - better retrieval quality
+  - easier later expansion
+- Why it was removed from the first build:
+  - unnecessary for a tiny curated corpus
+- Where it belongs now:
+  - Phase 2 first, Phase 3 if corpus scale increases
+
+9. Final agent workflow
+
+1. Intake
+- collect complaint description and uploaded evidence
+
+2. Evidence understanding
+- parse invoices, bookings, screenshots, and support communication
+
+3. Fact normalization
+- extract structured facts and missing-information flags
+
+4. Timeline assembly
+- reconstruct a coherent case timeline from scattered inputs
+
+5. Policy and regulation retrieval
+- retrieve company policy and external consumer guidance relevant to the case
+
+6. Comparative reasoning
+- compare the actual case facts against both internal policy and external rules
+
+7. Route selection
+- determine the best escalation route or target contact type
+
+8. Output generation
+- produce summaries, drafts, checklists, and evidence-pack materials
+
+9. Human review
+- show everything for user approval before any future downstream action
+
+10. Final build rule for the new directory
+
+When rebuilding from scratch:
+- do not start with all features
+- build Phase 1 completely first
+- make sure Phase 1 is visually strong, stable, and demoable
+- only then add Phase 2 items in priority order
+- leave Phase 3 for expansion or only if time remains
+
+Priority order inside the rebuild:
+1. Phase 1 complete
+2. citation UX
+3. escalation target quality
+4. image extraction
+5. better classification
+6. stronger evidence-pack export
+7. advanced retrieval
+8. optional sending
+9. optional automation or orchestration extras
+
+11. Final product promise
+
+When a user has already been failed by first-line support, Redressa AI should move them from scattered evidence and vague frustration to a grounded, structured, escalation-ready claim package in minutes.
+
+12. Final positioning line
+
+Redressa AI is an agentic consumer redressal workflow that turns messy complaint evidence into grounded, escalation-ready claim packages while staying narrow enough to build reliably and expand intelligently.
