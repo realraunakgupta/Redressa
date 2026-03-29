@@ -62,9 +62,15 @@ export function GeneratedOutputsPanel({ outputs }: { outputs: GeneratedOutputRow
       {activeOutput && (
         <div className="rounded-lg border border-neutral-800/50 bg-neutral-950/50 p-4">
           <div className="max-w-none">
-            <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-neutral-200">
-              {activeOutput.content}
-            </pre>
+            <pre
+              className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-neutral-200"
+              dangerouslySetInnerHTML={{
+                __html: activeOutput.content.replace(
+                  /\*\*(.*?)\*\*/g,
+                  '<strong class="text-white font-semibold">$1</strong>'
+                ),
+              }}
+            />
           </div>
         </div>
       )}

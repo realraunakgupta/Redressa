@@ -88,14 +88,17 @@ export function ExtractedFactsPanel({
 
       {timeline && timeline.length > 0 && (
         <div>
-          <h3 className="text-xs font-medium uppercase text-neutral-500">Timeline</h3>
-          <div className="mt-2 space-y-2">
+          <h3 className="text-xs font-medium uppercase text-neutral-500 mb-4">Timeline</h3>
+          <div className="relative border-l-2 border-neutral-800 ml-2 space-y-5">
             {timeline.map((entry, i) => (
-              <div key={i} className="flex gap-3 text-sm">
-                <span className="w-24 shrink-0 tabular-nums text-neutral-500">
-                  {entry.date || "-"}
-                </span>
-                <span className="text-neutral-300">{entry.label}</span>
+              <div key={i} className="relative pl-5">
+                <span className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full bg-neutral-600 ring-2 ring-neutral-900" />
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[10px] uppercase font-bold text-neutral-500">
+                    {entry.date || "Unknown Date"}
+                  </span>
+                  <span className="text-xs text-neutral-300 leading-snug">{entry.label}</span>
+                </div>
               </div>
             ))}
           </div>

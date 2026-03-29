@@ -78,22 +78,29 @@ export function RecommendationPanel({
             {routes.map((route, i) => (
               <div
                 key={i}
-                className="rounded-lg border border-neutral-800/50 bg-neutral-950/50 px-3 py-2.5"
+                className="rounded-lg border border-neutral-800/50 bg-neutral-950/50 p-4"
               >
-                <div className="flex items-center gap-2">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-neutral-800 text-xs text-neutral-400">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neutral-800 text-xs font-bold text-neutral-400">
                     {i + 1}
                   </span>
-                  <p className="text-xs font-medium text-neutral-200">{route.target_name}</p>
+                  <div>
+                    <p className="text-xs font-semibold text-neutral-200">{route.target_name}</p>
+                    {route.contact_info && (
+                      <p className="mt-0.5 text-[10px] uppercase tracking-wider text-neutral-500">
+                        VIA: {route.contact_info}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                {route.contact_info && (
-                  <p className="mt-1 break-words pl-7 text-xs text-neutral-500">
-                    {route.contact_info}
+                <div className="mt-4 pl-9">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                    AI Rationale
                   </p>
-                )}
-                <p className="mt-1 pl-7 text-xs leading-relaxed text-neutral-400">
-                  {route.rationale}
-                </p>
+                  <p className="text-xs leading-relaxed text-neutral-400">
+                    {route.rationale}
+                  </p>
+                </div>
               </div>
             ))}
           </div>

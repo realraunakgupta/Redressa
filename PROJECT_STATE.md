@@ -150,7 +150,7 @@ The project is in a good hackathon state when:
 
 | Item | Status |
 |------|--------|
-| **Current Phase** | Phase 1 stabilization complete |
+| **Current Phase** | Phase 1 working live + Phase 2 Trust UI Complete |
 | Source-of-truth files | Done |
 | Validation notes | Done |
 | Scaffold | Done |
@@ -161,7 +161,7 @@ The project is in a good hackathon state when:
 | Connected UI | Done |
 | End-to-end wiring & demo mode | Done |
 | Phase 1 stabilization | Done |
-| Phase 2 upgrades | Not started |
+| Phase 2 upgrades | UI Trust/Explainability Done. (PDF Parsing pending) |
 | Final polish | Not started |
 
 **Open Blockers:**
