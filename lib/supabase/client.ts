@@ -29,7 +29,17 @@ export function createBrowserSupabaseClient(): SupabaseClient {
     );
   }
 
-  browserClient = createClient(url, anonKey);
+  browserClient = createClient(url, anonKey, {
+    global: {
+      fetch: (fetchUrl, fetchInit) => {
+        return fetch(fetchUrl, {
+          ...fetchInit,
+          cache: "no-store",
+          keepalive: false,
+        });
+      },
+    },
+  });
   return browserClient;
 }
 
@@ -55,6 +65,17 @@ export function createServerSupabaseClient(): SupabaseClient {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
+    },
+    global: {
+      fetch: (fetchUrl, fetchInit) => {
+        // Next.js 16 aggressively connection-pools and caches fetches causing `TypeError: fetch failed`.
+        // We explicitly force disable Next's custom fetch caches for Supabase.
+        return fetch(fetchUrl, {
+          ...fetchInit,
+          cache: "no-store",
+          keepalive: false,
+        });
+      },
     },
   });
 }

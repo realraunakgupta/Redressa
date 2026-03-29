@@ -14,8 +14,9 @@ import {
   getCaseEvents,
   getCaseOutputs,
   getLatestCaseEventByType,
+  getCaseFiles,
 } from "@/lib/supabase";
-import type { CaseRow, CaseEventRow, GeneratedOutputRow } from "@/lib/supabase";
+import type { CaseRow, CaseEventRow, GeneratedOutputRow, CaseFileRow } from "@/lib/supabase";
 import type { Citation, EscalationRoute } from "@/lib/types";
 import type { ExtractedFacts } from "@/lib/pipeline/steps/extraction";
 import type { TimelineEntry } from "@/lib/pipeline/steps/timeline";
@@ -27,6 +28,9 @@ export interface CasePageData {
   caseRow: CaseRow;
   events: CaseEventRow[];
   outputs: GeneratedOutputRow[];
+  files: CaseFileRow[];
+  parsingMetadata: Record<string, unknown> | null;
+  extractionMetadata: Record<string, unknown> | null;
   facts: ExtractedFacts | null;
   timeline: TimelineEntry[] | null;
   evaluation: EvaluationResult | null;
@@ -42,13 +46,15 @@ export async function loadCasePageData(caseId: string): Promise<CasePageData | n
   if (!caseRow) return null;
 
   // Fetch all events and outputs in parallel
-  const [events, outputs] = await Promise.all([
+  const [events, outputs, files] = await Promise.all([
     getCaseEvents(caseId),
     getCaseOutputs(caseId),
+    getCaseFiles(caseId),
   ]);
 
   // Extract intermediate artifacts from event metadata
   const [
+    parsingEvent,
     extractionEvent,
     timelineEvent,
     evaluationEvent,
@@ -56,6 +62,7 @@ export async function loadCasePageData(caseId: string): Promise<CasePageData | n
     policyEvent,
     regulationEvent,
   ] = await Promise.all([
+    getLatestCaseEventByType(caseId, "parsing_complete"),
     getLatestCaseEventByType(caseId, "extraction_complete"),
     getLatestCaseEventByType(caseId, "timeline_assembled"),
     getLatestCaseEventByType(caseId, "evaluation_complete"),
@@ -71,6 +78,9 @@ export async function loadCasePageData(caseId: string): Promise<CasePageData | n
     caseRow,
     events,
     outputs,
+    files,
+    parsingMetadata: meta(parsingEvent),
+    extractionMetadata: meta(extractionEvent),
     facts: (meta(extractionEvent).facts as ExtractedFacts) ?? null,
     timeline: (meta(timelineEvent).entries as TimelineEntry[]) ?? null,
     evaluation: (meta(evaluationEvent).evaluation as EvaluationResult) ?? null,

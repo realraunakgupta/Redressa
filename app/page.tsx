@@ -6,98 +6,185 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   let recentCases: Awaited<ReturnType<typeof listCases>> = [];
   try {
-    recentCases = await listCases({ limit: 5 });
+    recentCases = await listCases({ limit: 8 });
   } catch {
-    // Supabase may not be configured yet — fail silently
+    // Supabase may not be configured yet
   }
 
+  const statusStyle: Record<string, { label: string; dot: string; text: string }> = {
+    intake: { label: "Intake", dot: "bg-neutral-400", text: "text-neutral-400" },
+    processing: { label: "Processing", dot: "bg-accent-400", text: "text-accent-400" },
+    evaluated: { label: "Evaluated", dot: "bg-primary-400", text: "text-primary-400" },
+    complete: { label: "Complete", dot: "bg-success-500", text: "text-success-500" },
+    error: { label: "Error", dot: "bg-error-500", text: "text-error-500" },
+  };
+
   return (
-    <main className="min-h-screen px-6 py-12">
-      <div className="mx-auto max-w-3xl">
-        {/* Header */}
-        <div className="text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-neutral-50 sm:text-5xl">
-            Redressa{" "}
-            <span className="text-primary-400">AI</span>
-          </h1>
-
-          <p className="mt-4 text-base text-neutral-400">
-            Turn messy complaint evidence into grounded, escalation-ready claim
-            packages — powered by an agentic redressal workflow.
-          </p>
-
-          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+    <div className="min-h-screen flex flex-col">
+      {/* ── Top Bar ── */}
+      <header className="border-b border-neutral-800 bg-neutral-900">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
+          <Link href="/" className="text-lg font-bold tracking-tight text-neutral-50">
+            Redressa<span className="text-primary-500 ml-1">AI</span>
+          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/status"
+              className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors"
+            >
+              Status
+            </Link>
             <Link
               href="/new"
-              className="rounded-lg bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 transition-colors"
+              className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500 transition-colors"
             >
               File a New Claim
             </Link>
-            <Link
-              href="/status"
-              className="rounded-lg border border-neutral-700 px-6 py-3 text-sm font-semibold text-neutral-300 hover:border-neutral-500 hover:text-neutral-100 transition-colors"
-            >
-              System Status
-            </Link>
-          </div>
-
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
-            {["Aviation (IndiGo)", "E-Commerce (Flipkart)"].map((label) => (
-              <span
-                key={label}
-                className="rounded-full border border-neutral-800 bg-neutral-900 px-4 py-1.5 text-xs text-neutral-400"
-              >
-                {label}
-              </span>
-            ))}
           </div>
         </div>
+      </header>
 
-        {/* Recent Cases */}
-        {recentCases.length > 0 && (
-          <div className="mt-16">
+      {/* ── Workspace Hero ── */}
+      <main className="flex-1">
+        <div className="mx-auto max-w-7xl px-6 py-12">
+          <div className="max-w-2xl">
+            <h1 className="text-3xl font-bold tracking-tight text-neutral-50">
+              Consumer Redressal Workflow
+            </h1>
+            <p className="mt-3 text-base text-neutral-400 leading-relaxed">
+              Turn messy complaint evidence into grounded, escalation-ready claim packages.
+              Upload your evidence, and the agentic pipeline will extract facts, retrieve
+              relevant policies, evaluate your position, and generate action-ready outputs.
+            </p>
+
+            <div className="mt-6 flex items-center gap-4">
+              <Link
+                href="/new"
+                className="rounded-md bg-primary-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-500 transition-colors"
+              >
+                Start New Claim
+              </Link>
+              <div className="flex gap-2">
+                {["Aviation", "E-Commerce"].map((cat) => (
+                  <span
+                    key={cat}
+                    className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-400"
+                  >
+                    {cat}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <p className="mt-4 text-xs text-neutral-600">
+              Guidance workflow, not legal advice.
+            </p>
+          </div>
+
+          {/* ── Recent Cases ── */}
+          <section className="mt-14">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
               Recent Claims
             </h2>
-            <div className="mt-4 space-y-2">
-              {recentCases.map((c) => {
-                const statusColors: Record<string, string> = {
-                  intake: "text-neutral-400",
-                  processing: "text-accent-400",
-                  evaluated: "text-primary-400",
-                  complete: "text-success-500",
-                  error: "text-error-500",
-                };
-                return (
-                  <Link
-                    key={c.id}
-                    href={`/case/${c.id}`}
-                    className="flex items-center justify-between gap-4 rounded-lg border border-neutral-800 bg-neutral-900/50 px-4 py-3 hover:border-neutral-700 transition-colors"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-neutral-200 truncate">
-                        {c.merchant_name ?? "Complaint"} — {c.subcategory?.replace(/_/g, " ") ?? c.category ?? "Unclassified"}
-                      </p>
-                      <p className="mt-0.5 text-xs text-neutral-500 truncate">
-                        {c.description.slice(0, 100)}
-                        {c.description.length > 100 ? "…" : ""}
-                      </p>
-                    </div>
-                    <div className="shrink-0 text-right">
-                      <p className={`text-xs font-medium capitalize ${statusColors[c.status] ?? "text-neutral-500"}`}>
-                        {c.status}
-                      </p>
-                      <p className="mt-0.5 text-xs text-neutral-600">
-                        {new Date(c.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
-                      </p>
-                    </div>
-                  </Link>
-                );
-              })}
+
+            {recentCases.length === 0 ? (
+              <div className="mt-4 rounded-lg border border-dashed border-neutral-800 px-6 py-8 text-center">
+                <p className="text-sm text-neutral-500">No claims yet.</p>
+                <p className="mt-1 text-xs text-neutral-600">
+                  File a new claim to see it appear here.
+                </p>
+              </div>
+            ) : (
+              <div className="mt-4 overflow-hidden rounded-lg border border-neutral-800">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-neutral-800 bg-neutral-800/30">
+                      <th className="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wider text-neutral-500">
+                        Claim
+                      </th>
+                      <th className="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wider text-neutral-500 hidden sm:table-cell">
+                        Category
+                      </th>
+                      <th className="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wider text-neutral-500 hidden md:table-cell">
+                        Filed
+                      </th>
+                      <th className="px-4 py-2.5 text-right text-xs font-medium uppercase tracking-wider text-neutral-500">
+                        Status
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-800/50">
+                    {recentCases.map((c) => {
+                      const s = statusStyle[c.status] ?? statusStyle.intake;
+                      return (
+                        <tr key={c.id} className="hover:bg-neutral-800/30 transition-colors">
+                          <td className="px-4 py-3">
+                            <Link href={`/case/${c.id}`} className="block">
+                              <p className="font-medium text-neutral-200 truncate max-w-md">
+                                {c.merchant_name ?? "Complaint"} —{" "}
+                                {c.subcategory?.replace(/_/g, " ") ?? "General"}
+                              </p>
+                              <p className="mt-0.5 text-xs text-neutral-500 truncate max-w-md">
+                                {c.description.slice(0, 80)}
+                                {c.description.length > 80 ? "…" : ""}
+                              </p>
+                            </Link>
+                          </td>
+                          <td className="px-4 py-3 text-xs text-neutral-400 capitalize hidden sm:table-cell">
+                            {c.category ?? "—"}
+                          </td>
+                          <td className="px-4 py-3 text-xs text-neutral-500 hidden md:table-cell">
+                            {new Date(c.created_at).toLocaleDateString("en-IN", {
+                              day: "numeric",
+                              month: "short",
+                            })}
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <span className="inline-flex items-center gap-1.5">
+                              <span className={`inline-block h-1.5 w-1.5 rounded-full ${s.dot}`} />
+                              <span className={`text-xs font-medium ${s.text}`}>{s.label}</span>
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        </div>
+      </main>
+
+      {/* ── Footer ── */}
+      <footer className="border-t border-neutral-800 bg-neutral-900/50">
+        <div className="mx-auto max-w-7xl px-6 py-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-medium text-neutral-300">Redressa AI</p>
+              <p className="mt-1 text-xs text-neutral-500">
+                Agentic consumer redressal workflow for Indian consumers.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-neutral-500">
+              <span>Aviation • E-Commerce</span>
+              <span>Built for Protex Hack-2-Win 2026</span>
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-neutral-300 transition-colors"
+              >
+                GitHub
+              </a>
             </div>
           </div>
-        )}
-      </div>
-    </main>
+          <p className="mt-4 text-xs text-neutral-600">
+            This tool provides informational guidance only and does not constitute legal advice.
+            Always consult qualified professionals for legal matters.
+          </p>
+        </div>
+      </footer>
+    </div>
   );
 }

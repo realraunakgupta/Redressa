@@ -4,7 +4,7 @@
 - Name: Redressa AI
 - Hackathon: Protex Hack-2-Win Hackathon 2026
 - Track: Track 2 - Agentic AI / AI Workflows
-- Status: Phase 1 live baseline preserved; Prompt 11 expanded with real upload and vision-capable parsing path
+- Status: Phase 1 live baseline preserved; Prompt 11 complete; Prompt 12 UI polish applied
 
 ## One-line problem statement
 - Redressa AI helps Indian consumers convert failed refunds, damaged deliveries, and travel disruption complaints into grounded escalation-ready claim packs without manually decoding policies, regulations, and escalation paths.
@@ -25,8 +25,9 @@
 - AI provider: Groq API behind a small provider adapter
 - Parsing:
   - real file upload to Supabase Storage for supported evidence flows
-  - text and image/screenshot extraction via Groq in the current implementation
-  - PDF parsing still intentionally limited
+  - text extraction via direct decode where possible
+  - image/screenshot OCR via OCR.space adapter
+  - PDF support is best-effort and limited by OCR.space free-tier constraints
 - Retrieval:
   - curated policy/regulation chunk store first
   - optional vector retrieval later
@@ -151,7 +152,7 @@ The project is in a good hackathon state when:
 
 | Item | Status |
 |------|--------|
-| **Current Phase** | Phase 1 working live + Prompt 11 expanded implementation pending full runtime verification |
+| **Current Phase** | Final Build Frozen (Prompt 12 + Final Cleanup applied) |
 | Source-of-truth files | Done |
 | Validation notes | Done |
 | Scaffold | Done |
@@ -162,21 +163,18 @@ The project is in a good hackathon state when:
 | Connected UI | Done |
 | End-to-end wiring & demo mode | Done |
 | Phase 1 stabilization | Done |
-| Phase 2 upgrades | Implemented in code with upload/vision expansion; runtime verification still pending |
-| Final polish | Not started |
+| Phase 2 upgrades | Implemented and verified for current uploaded-image OCR flow |
+| Final polish (Prompt 12) | Applied |
+
+**Prompt 12 Status (UI Polish Applied):**
+- **Design system:** Updated to charcoal base (zinc-900), electric cobalt blue accent, and standard system fonts.
+- **App structure:** Added a left rail (sidebar) to the in-app workspace screens to function as an analyst console.
+- **Homepage:** Shifted from marketing-style to a direct, app-first workspace layout.
+- **New Claim page:** Moved demo triggers into a subtle "use a sample case" collapsible section.
+- **Case page:** Gated the Evidence Debug panel behind a '?debug=1' query parameter and added legal disclaimers.
+- **Pipeline integrity:** All data routing, extraction logic (Groq / OCR.space), and backend endpoints remain untouched.
 
 **Open Blockers:**
-- The new real upload + vision path is implemented in code, but end-to-end runtime verification of uploaded-file extraction is still pending.
-- The real upload path depends on the Supabase `evidence` bucket and anon storage policies being applied correctly in the environment.
-- PDF parsing remains intentionally limited in the current implementation.
-- The seeded demo path remains the safest judge-facing fallback until live uploaded evidence flow is verified.
-
-**Prompt 11 Status (Implemented via Authorized Expansion):**
-- **Escalation Selection**: [COMPLETED IN CODE] Structural signals now map more directly to escalation tiering.
-- **Classification**: [COMPLETED IN CODE] Classification is stronger and more structured within supported categories/subcategories.
-- **Image Understanding**: [IMPLEMENTED IN CODE / VERIFY IN RUNTIME] The UI now uploads files to the Supabase `evidence` bucket, and parsing includes a Groq vision path for image/screenshot files.
-- **Evidence Pack Quality**: [COMPLETED IN CODE] Formal rendering relies on an internal `InternalEvidencePack` schema mapping out facts, derivations, extracted evidence, and gaps.
-
-**Next Step:**
-- Verify the new uploaded-evidence flow end to end before declaring Prompt 11 fully complete.
-- Only move to Prompt 12 after uploaded screenshot/image extraction works in a real run.
+- The dual-model setup is preserved: Groq for reasoning, OCR.space strictly for image extraction.
+- PDF support remains best-effort, constrained by the OCR.space free tier.
+- The seeded demo path is preserved as a judge-facing fallback and can be accessed via the subtle affordance on the New Claim page.

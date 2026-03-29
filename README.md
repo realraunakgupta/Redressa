@@ -14,15 +14,15 @@
 | Frontend / App | Next.js 16 App Router + TypeScript + Tailwind v4 |
 | Backend | Server-side logic inside Next.js (route handlers + server components) |
 | Database + Storage | Supabase (PostgreSQL + Storage) |
-| AI | Groq API via provider adapter |
+| AI Reasoning | Groq API via provider adapter (`llama-3.3-70b-versatile`) |
+| AI OCR | OCR.space API strictly for image extraction |
 | Deployment | Vercel |
 
 ## Current Baseline
 
-- The live pipeline is working with Groq as the active provider.
+- The live pipeline is working with Groq as the primary reasoning provider.
 - The seeded demo path remains the safest fallback for judges.
-- The current codebase now includes real file upload to Supabase Storage and a vision-capable parsing path for image/screenshot files.
-- PDF parsing is still intentionally limited.
+- The codebase utilizes a dual-model architecture: **OCR.space** acts exclusively as the Document OCR engine, streaming Text Extractions from uploaded Images directly into the Groq-powered reasoning context. *(Note: Gemini 1.5 Flash was implemented but superseded due to limitations).*
 
 ## Getting Started
 
@@ -31,7 +31,8 @@
 - Node.js 18+
 - npm
 - A Supabase project (free tier is fine)
-- A Groq API key
+- A Groq API key (for reasoning)
+- An OCR.space API key (for Document Extraction)
 
 ### Local Setup
 
@@ -61,6 +62,7 @@ Then fill in your credentials in `.env.local`:
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase Dashboard > Project Settings > API > anon/public key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase Dashboard > Project Settings > API > service_role key |
 | `GROQ_API_KEY` | [Groq Console](https://console.groq.com/keys) |
+| `OCR_SPACE_API_KEY` | [OCR.space](https://ocr.space/OCRAPI) |
 
 ### Supabase Database Setup
 

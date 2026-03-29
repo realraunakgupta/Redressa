@@ -45,13 +45,14 @@ In the Vercel import screen, expand **Environment Variables** and add:
 | `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL | ✅ Yes |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon/public key | ✅ Yes |
 | `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase service_role key | ✅ Yes |
-| `GEMINI_API_KEY` | Your Gemini API key | ⏳ Later |
+| `GROQ_API_KEY` | Your Groq API key | ✅ Yes |
+| `OCR_SPACE_API_KEY` | Your OCR.space API key | ✅ Yes |
 
 > **Where to find Supabase keys:** Dashboard → Project Settings → API
 >
-> **Where to get Gemini key:** [Google AI Studio](https://aistudio.google.com/apikey)
-
-You can add `GEMINI_API_KEY` later — the app works without it (shows "not_configured" in health check).
+> **Where to get Groq key:** [Groq Console](https://console.groq.com/keys)
+>
+> **Where to get OCR.space key:** [OCR.space](https://ocr.space/OCRAPI)
 
 ### 4. Deploy
 

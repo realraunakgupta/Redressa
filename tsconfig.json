@@ -30,5 +30,12 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "debug_*.ts",
+    "debug_*.js",
+    "test_*.ts",
+    "test_*.js",
+    "fix_env.js"
+  ]
 }

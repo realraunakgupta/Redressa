@@ -45,7 +45,9 @@ export async function stepExtraction(
 COMPLAINT:
 ${description}
 
-${evidenceText ? `EVIDENCE:\n${evidenceText}` : "No additional evidence provided."}
+${evidenceText ? `EVIDENCE (INCLUDING RAW OCR/DOCUMENT TEXT):\n${evidenceText}` : "No additional evidence provided."}
+
+CRITICAL: The evidence contains raw text extracted via OCR from user-uploaded screenshots and PDFs. You must scan the evidence heavily to locate hidden Order IDs, exact monetary amounts, transaction dates, and specific merchant statements that the user might have omitted from their manual complaint text.
 
 Return JSON with this exact schema:
 {
@@ -79,6 +81,9 @@ Return JSON with this exact schema:
       date_count: facts.dates.length,
       has_amount: facts.amount !== null,
       evidence_types: facts.evidence_types_present,
+      evidence_prompt_length: evidenceText.length,
+      evidence_files_used: evidence.filter((e) => e.parsed_text).length,
+      evidence_preview: evidenceText ? evidenceText.substring(0, 400).replace(/\n/g, ' ') : null,
       facts,
     },
   });
