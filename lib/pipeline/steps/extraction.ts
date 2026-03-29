@@ -1,7 +1,7 @@
 /**
  * Pipeline Step: Fact Extraction
  *
- * Uses Gemini to extract structured facts from complaint description + evidence.
+ * Uses the active provider adapter to extract structured facts from complaint description + evidence.
  * Outputs normalized data for downstream steps.
  */
 
@@ -21,6 +21,7 @@ export interface ExtractedFacts {
   consumer_actions_taken: string[];
   merchant_responses: string[];
   desired_resolution: string | null;
+  evidence_types_present: string[];
 }
 
 const SYSTEM_INSTRUCTION = `You are a consumer complaint fact extractor for Indian consumers.
@@ -35,7 +36,7 @@ export async function stepExtraction(
   evidence: ParsedEvidence[]
 ): Promise<ExtractedFacts> {
   const evidenceText = evidence
-    .filter((e) => e.parsed_text && !e.parsed_text.startsWith("["))
+    .filter((e) => e.parsed_text)
     .map((e) => `[${e.file_name}]: ${e.parsed_text}`)
     .join("\n\n");
 
@@ -58,7 +59,8 @@ Return JSON with this exact schema:
   "issues": ["list of specific issues"],
   "consumer_actions_taken": ["steps already taken by consumer"],
   "merchant_responses": ["how merchant responded"],
-  "desired_resolution": "what the consumer wants or null"
+  "desired_resolution": "what the consumer wants or null",
+  "evidence_types_present": ["list of evidence types implied by filenames/stubs, e.g. 'screenshot', 'receipt'"]
 }`;
 
   const facts = await generateJSON<ExtractedFacts>({
@@ -71,11 +73,12 @@ Return JSON with this exact schema:
     case_id: caseId,
     event_type: "extraction_complete",
     title: "Facts extracted",
-    detail: `${facts.issues.length} issue(s) identified | ${facts.dates.length} date(s) found`,
+    detail: `${facts.issues.length} issue(s) identified | ${facts.evidence_types_present.length} evidence type(s) guessed`,
     metadata: {
       issue_count: facts.issues.length,
       date_count: facts.dates.length,
       has_amount: facts.amount !== null,
+      evidence_types: facts.evidence_types_present,
       facts,
     },
   });

@@ -7,14 +7,14 @@
  * Steps:
  * 1. Intake (creates case)
  * 2. Evidence parsing
- * 3. Fact extraction (Gemini)
+ * 3. Fact extraction (provider adapter)
  * 4. Timeline assembly
  * 5. Classification
  * 6. Policy retrieval
  * 7. Regulation retrieval (combined in step 6)
- * 8. Grounded evaluation (Gemini)
+ * 8. Grounded evaluation (provider adapter)
  * 9. Escalation route recommendation
- * 10. Output generation (Gemini)
+ * 10. Output generation (provider adapter)
  */
 
 import { getCase, updateCaseStatus, addCaseEvent } from "@/lib/supabase/helpers";
@@ -82,7 +82,7 @@ export async function runPipelineForCase(caseId: string): Promise<void> {
     // Step 2: Parse evidence
     const evidence = await stepParsing(caseId);
 
-    // Step 3: Extract facts (Gemini)
+    // Step 3: Extract facts (provider adapter)
     const facts = await stepExtraction(caseId, caseRow.description, evidence);
 
     // Step 4: Assemble timeline
@@ -102,7 +102,7 @@ export async function runPipelineForCase(caseId: string): Promise<void> {
       caseRow.description
     );
 
-    // Step 8: Grounded evaluation (Gemini)
+    // Step 8: Grounded evaluation (provider adapter)
     const evaluation = await stepEvaluation(caseId, facts, timeline, retrieval);
 
     // Step 9: Escalation route recommendation
@@ -112,7 +112,7 @@ export async function runPipelineForCase(caseId: string): Promise<void> {
       evaluation
     );
 
-    // Step 10: Output generation (Gemini)
+    // Step 10: Output generation (provider adapter)
     await stepOutputGeneration(
       caseId,
       facts,

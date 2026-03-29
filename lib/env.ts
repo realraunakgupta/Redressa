@@ -10,7 +10,7 @@ interface EnvConfig {
   supabaseUrl: string;
   supabaseAnonKey: string;
   supabaseServiceRoleKey: string;
-  // Gemini
+  // Groq
   groqApiKey: string;
   // App
   appUrl: string;

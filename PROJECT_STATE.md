@@ -4,7 +4,7 @@
 - Name: Redressa AI
 - Hackathon: Protex Hack-2-Win Hackathon 2026
 - Track: Track 2 - Agentic AI / AI Workflows
-- Status: Phase 1 stabilization complete (text-first demo-safe baseline); ready for optional Phase 2 upgrades
+- Status: Phase 1 live baseline preserved; Prompt 11 expanded with real upload and vision-capable parsing path
 
 ## One-line problem statement
 - Redressa AI helps Indian consumers convert failed refunds, damaged deliveries, and travel disruption complaints into grounded escalation-ready claim packs without manually decoding policies, regulations, and escalation paths.
@@ -24,8 +24,9 @@
 - Database + Storage: Supabase
 - AI provider: Groq API behind a small provider adapter
 - Parsing:
-  - deterministic PDF parsing first
-  - Groq (Llama 3) extraction for documents
+  - real file upload to Supabase Storage for supported evidence flows
+  - text and image/screenshot extraction via Groq in the current implementation
+  - PDF parsing still intentionally limited
 - Retrieval:
   - curated policy/regulation chunk store first
   - optional vector retrieval later
@@ -110,7 +111,7 @@ Build in this order:
 
 ## Required external services
 - Supabase project
-- Gemini API key
+- Groq API key
 - Vercel project
 
 ## Required core data
@@ -150,7 +151,7 @@ The project is in a good hackathon state when:
 
 | Item | Status |
 |------|--------|
-| **Current Phase** | Phase 1 working live + Phase 2 Trust UI Complete |
+| **Current Phase** | Phase 1 working live + Prompt 11 expanded implementation pending full runtime verification |
 | Source-of-truth files | Done |
 | Validation notes | Done |
 | Scaffold | Done |
@@ -161,13 +162,21 @@ The project is in a good hackathon state when:
 | Connected UI | Done |
 | End-to-end wiring & demo mode | Done |
 | Phase 1 stabilization | Done |
-| Phase 2 upgrades | UI Trust/Explainability Done. (PDF Parsing pending) |
+| Phase 2 upgrades | Implemented in code with upload/vision expansion; runtime verification still pending |
 | Final polish | Not started |
 
 **Open Blockers:**
-- **RESOLVED**: AI Provider Free-Tier Timeout Limit. Migrated the backend adapter from Gemini to Groq (Llama 3.3 70B) to bypass Vercel timeout errors caused by 15 RPM limits on rapid pipeline testing. The architecture remains fully strictly locked in Phase 1 otherwise.
-- File selection is now visible in the intake flow, but file contents are not uploaded or parsed yet
-- The most reliable demo path is still the text-first seeded/live complaint flow
+- The new real upload + vision path is implemented in code, but end-to-end runtime verification of uploaded-file extraction is still pending.
+- The real upload path depends on the Supabase `evidence` bucket and anon storage policies being applied correctly in the environment.
+- PDF parsing remains intentionally limited in the current implementation.
+- The seeded demo path remains the safest judge-facing fallback until live uploaded evidence flow is verified.
+
+**Prompt 11 Status (Implemented via Authorized Expansion):**
+- **Escalation Selection**: [COMPLETED IN CODE] Structural signals now map more directly to escalation tiering.
+- **Classification**: [COMPLETED IN CODE] Classification is stronger and more structured within supported categories/subcategories.
+- **Image Understanding**: [IMPLEMENTED IN CODE / VERIFY IN RUNTIME] The UI now uploads files to the Supabase `evidence` bucket, and parsing includes a Groq vision path for image/screenshot files.
+- **Evidence Pack Quality**: [COMPLETED IN CODE] Formal rendering relies on an internal `InternalEvidencePack` schema mapping out facts, derivations, extracted evidence, and gaps.
 
 **Next Step:**
-- Phase 2 Upgrades (Prompt 11)
+- Verify the new uploaded-evidence flow end to end before declaring Prompt 11 fully complete.
+- Only move to Prompt 12 after uploaded screenshot/image extraction works in a real run.

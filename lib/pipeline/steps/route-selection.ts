@@ -17,6 +17,8 @@ const AVIATION_ROUTES: EscalationRoute[] = [
     contact_info: "customer.relations@goindigo.in",
     rationale: "First point of escalation. Airline must acknowledge within 7 days and resolve within 30 days.",
     priority: 1,
+    legal_weight: "low",
+    estimated_timeframe: "30 days",
   },
   {
     target: "nodal_officer",
@@ -24,6 +26,8 @@ const AVIATION_ROUTES: EscalationRoute[] = [
     contact_info: "nodal.officer@goindigo.in",
     rationale: "If grievance cell does not resolve within 30 days, escalate to the nodal officer.",
     priority: 2,
+    legal_weight: "medium",
+    estimated_timeframe: "30 days",
   },
   {
     target: "regulator",
@@ -31,6 +35,8 @@ const AVIATION_ROUTES: EscalationRoute[] = [
     contact_info: "https://airsewa.gov.in | passenger-grievance@dgca.nic.in",
     rationale: "If the airline does not resolve within 30 days, file with DGCA passenger grievance authority.",
     priority: 3,
+    legal_weight: "high",
+    estimated_timeframe: "45-60 days",
   },
   {
     target: "consumer_forum",
@@ -38,6 +44,8 @@ const AVIATION_ROUTES: EscalationRoute[] = [
     contact_info: "https://consumerhelpline.gov.in | 1800-11-4000",
     rationale: "File a formal complaint under the Consumer Protection Act, 2019 if regulatory escalation is insufficient.",
     priority: 4,
+    legal_weight: "high",
+    estimated_timeframe: "3-6 months",
   },
 ];
 
@@ -48,6 +56,8 @@ const ECOMMERCE_ROUTES: EscalationRoute[] = [
     contact_info: "In-app chat | cs@flipkart.com | 1800-202-9898",
     rationale: "First point of contact. Request a ticket number for tracking.",
     priority: 1,
+    legal_weight: "low",
+    estimated_timeframe: "3-7 days",
   },
   {
     target: "nodal_officer",
@@ -55,6 +65,8 @@ const ECOMMERCE_ROUTES: EscalationRoute[] = [
     contact_info: "grievance.officer@flipkart.com",
     rationale: "If customer support does not resolve, escalate to the designated grievance officer.",
     priority: 2,
+    legal_weight: "medium",
+    estimated_timeframe: "15-30 days",
   },
   {
     target: "consumer_forum",
@@ -62,6 +74,8 @@ const ECOMMERCE_ROUTES: EscalationRoute[] = [
     contact_info: "https://consumerhelpline.gov.in | 1800-11-4000",
     rationale: "File a complaint on the National Consumer Helpline portal for mediation.",
     priority: 3,
+    legal_weight: "high",
+    estimated_timeframe: "30-60 days",
   },
   {
     target: "consumer_forum",
@@ -69,6 +83,8 @@ const ECOMMERCE_ROUTES: EscalationRoute[] = [
     contact_info: "https://edaakhil.nic.in",
     rationale: "File a formal case under the Consumer Protection Act, 2019 for legal redressal.",
     priority: 4,
+    legal_weight: "high",
+    estimated_timeframe: "3-6 months",
   },
 ];
 
@@ -79,17 +95,28 @@ export async function stepRouteSelection(
 ): Promise<EscalationRoute[]> {
   const baseRoutes = category === "aviation" ? AVIATION_ROUTES : ECOMMERCE_ROUTES;
 
-  // Filter routes based on severity
-  let routes: EscalationRoute[];
-  if (evaluation.overall_assessment === "strong") {
-    // Strong case: include all routes including legal
-    routes = baseRoutes;
-  } else if (evaluation.overall_assessment === "moderate") {
-    // Moderate: skip legal forums initially
-    routes = baseRoutes.filter((r) => r.priority <= 3);
-  } else {
-    // Weak: start with basic grievance only
+  let routes: EscalationRoute[] = [];
+  
+  // Core structural signals representing escalating legal strength
+  const hasRegViolations = evaluation.regulatory_violations && evaluation.regulatory_violations.length > 0;
+  const hasRightsViolations = evaluation.consumer_rights_violated && evaluation.consumer_rights_violated.length > 0;
+  const hasUnmetObligations = evaluation.merchant_obligations_unmet && evaluation.merchant_obligations_unmet.length > 0;
+  const hasWeakAssessment = evaluation.overall_assessment === "weak";
+
+  // Tier 1: Highest Legal Severity (Regulatory Violations OR Direct Consumer Rights Abuses)
+  // Regulator and Consumer Forum paths become valid
+  if ((hasRegViolations || hasRightsViolations) && !hasWeakAssessment) {
+    routes = baseRoutes; // Show the full escalation path including regulators/courts
+  } 
+  // Tier 2: Moderate Legal Severity (Contractual/Merchant Obligations Unmet)
+  // Nodal Officer / Grievance Officer paths become valid
+  else if (hasUnmetObligations || evaluation.overall_assessment === "moderate") {
     routes = baseRoutes.filter((r) => r.priority <= 2);
+  } 
+  // Tier 3: Low/Undefined Severity (Service complaints with no proven violations)
+  // Only frontline Grievance Cell path is valid
+  else {
+    routes = baseRoutes.filter((r) => r.priority <= 1);
   }
 
   await addCaseEvent({

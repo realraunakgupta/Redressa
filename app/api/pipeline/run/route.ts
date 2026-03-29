@@ -11,7 +11,7 @@
  *   "order_reference": "ABC123" (optional),
  *   "amount": 5000 (optional),
  *   "is_demo": false (optional),
- *   "files": [{ "name": "email.pdf", "type": "application/pdf", "size": 1024 }] (optional)
+ *   "files": [{ "name": "email.pdf", "type": "application/pdf", "size": 1024, "storage_path": "uploads/xyz.png" }] (optional)
  * }
  *
  * Returns: { caseId: string }
@@ -31,7 +31,7 @@ interface RunPipelineBody {
   order_reference: string | null;
   amount: number | null;
   is_demo: boolean;
-  files: { name: string; type: string; size: number }[];
+  files: { name: string; type: string; size: number; storage_path: string }[];
 }
 
 function validateRunPipelineBody(body: unknown):
@@ -95,7 +95,7 @@ function validateRunPipelineBody(body: unknown):
   }
 
   const filesRaw = payload.files;
-  const files: { name: string; type: string; size: number }[] = [];
+  const files: { name: string; type: string; size: number; storage_path: string }[] = [];
   if (filesRaw !== undefined && filesRaw !== null) {
     if (!Array.isArray(filesRaw)) {
       return { success: false, error: "Invalid 'files'. Expected an array" };
@@ -103,10 +103,10 @@ function validateRunPipelineBody(body: unknown):
     for (const f of filesRaw) {
       if (!f || typeof f !== "object") return { success: false, error: "Invalid file entry" };
       const fObj = f as Record<string, unknown>;
-      if (typeof fObj.name !== "string" || typeof fObj.type !== "string" || typeof fObj.size !== "number") {
+      if (typeof fObj.name !== "string" || typeof fObj.type !== "string" || typeof fObj.size !== "number" || typeof fObj.storage_path !== "string") {
         return { success: false, error: "Invalid file signature" };
       }
-      files.push({ name: fObj.name, type: fObj.type, size: fObj.size });
+      files.push({ name: fObj.name, type: fObj.type, size: fObj.size, storage_path: fObj.storage_path });
     }
   }
 
@@ -147,9 +147,9 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         {
-          error: "Gemini quota exceeded",
+          error: "AI provider quota exceeded",
           detail:
-            "The configured Gemini API key has exhausted its current quota. The live pipeline cannot complete until quota is restored or the key is replaced.",
+            "The configured AI provider key has exhausted its current quota. The live pipeline cannot complete until quota is restored or the key is replaced.",
         },
         { status: 503 }
       );
@@ -158,9 +158,9 @@ export async function POST(request: NextRequest) {
     if (message.includes("ModelNotFound")) {
       return NextResponse.json(
         {
-          error: "Gemini model unavailable",
+          error: "AI provider model unavailable",
           detail:
-            "The configured Gemini model is not available for this API key or SDK version. Switch to a supported model before retrying.",
+            "The configured model is not available for the current API key or SDK path. Switch to a supported model before retrying.",
         },
         { status: 503 }
       );

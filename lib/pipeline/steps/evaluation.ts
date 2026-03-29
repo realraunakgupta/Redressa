@@ -1,7 +1,7 @@
 /**
  * Pipeline Step: Grounded Evaluation
  *
- * Uses Gemini to evaluate the complaint against retrieved policies and regulations.
+ * Uses the active provider adapter to evaluate the complaint against retrieved policies and regulations.
  * The evaluation is grounded — every claim references specific policy/regulation sections.
  */
 

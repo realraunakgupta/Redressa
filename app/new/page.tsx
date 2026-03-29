@@ -8,6 +8,7 @@ import {
   DEMO_ECOMMERCE_CASE,
   type DemoCase,
 } from "@/lib/demo-data";
+import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 
 type Category = "aviation" | "ecommerce";
 
@@ -44,16 +45,16 @@ export default function NewClaimPage() {
     // Seed demo file entries that match the bundled evidence artifacts.
     if (demoData.category === "aviation") {
       setFiles([
-        new File(["demo evidence placeholder"], "indigo-cancellation-email.txt", {
+        new File([""], "indigo-cancellation-email.txt", {
           type: "text/plain",
         }),
       ]);
     } else {
       setFiles([
-        new File(["demo evidence placeholder"], "flipkart-damaged-laptop.txt", {
+        new File([""], "flipkart-damaged-laptop.txt", {
           type: "text/plain",
         }),
-        new File(["demo evidence placeholder"], "flipkart-return-denial.txt", {
+        new File([""], "flipkart-return-denial.txt", {
           type: "text/plain",
         }),
       ]);
@@ -74,6 +75,32 @@ export default function NewClaimPage() {
     setSubmitting(true);
 
     try {
+      const uploadedFiles = [];
+      const supabase = createBrowserSupabaseClient();
+      
+      // Upload genuine files to Supabase Storage before hitting the API
+      for (const f of files) {
+        if (!isDemoFlag || f.size > 0) {
+          const fileExt = f.name.split('.').pop();
+          const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+          const storagePath = `uploads/${fileName}`;
+          
+          const { error: uploadError } = await supabase.storage
+            .from('evidence')
+            .upload(storagePath, f);
+            
+          if (uploadError) {
+            console.error("Upload error:", uploadError);
+            throw new Error(`Failed to upload file ${f.name}`);
+          }
+          
+          uploadedFiles.push({ name: f.name, type: f.type, size: f.size, storage_path: storagePath });
+        } else {
+          // Demo files are just tracked by metadata; their seeds live securely on the backend
+          uploadedFiles.push({ name: f.name, type: f.type, size: f.size, storage_path: "demo/stub/" + f.name });
+        }
+      }
+
       const res = await fetch("/api/pipeline/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -84,7 +111,7 @@ export default function NewClaimPage() {
           order_reference: orderReference.trim() || null,
           amount: amount ? parseFloat(amount) : null,
           is_demo: isDemoFlag,
-          files: files.map(f => ({ name: f.name, type: f.type, size: f.size })),
+          files: uploadedFiles,
         }),
       });
 
@@ -239,7 +266,7 @@ export default function NewClaimPage() {
                   Click to select files
                 </span>
                 <span className="mt-1 block text-xs text-neutral-500">
-                  Current Phase 1 flow records file metadata and still relies on pasted text for processing
+                  Select text files, emails, or screenshots to support your complaint
                 </span>
               </label>
             </div>
@@ -257,8 +284,7 @@ export default function NewClaimPage() {
               </ul>
             )}
             <p className="mt-2 text-xs text-neutral-600">
-              Selected files are tracked on the case record in this build. The analysis still uses the
-              complaint description as the primary evidence source.
+              Selected files will be uploaded to secure storage and extracted automatically by the AI Pipeline.
             </p>
           </div>
 

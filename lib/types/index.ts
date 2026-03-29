@@ -143,4 +143,6 @@ export interface EscalationRoute {
   contact_info: string | null;
   rationale: string;
   priority: number;
+  legal_weight?: "low" | "medium" | "high";
+  estimated_timeframe?: string;
 }

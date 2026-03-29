@@ -8,16 +8,20 @@
  * 4. Evidence Checklist
  * 5. Evidence Pack Preview
  *
- * Uses Gemini for text generation, grounded in evaluation + retrieved policies.
+ * Uses the active provider adapter for text generation, grounded in evaluation + retrieved policies.
  */
 
 import { generateText } from "@/lib/groq/client";
-import { addCaseEvent, addGeneratedOutput, updateCaseStatus } from "@/lib/supabase/helpers";
+import {
+  addCaseEvent,
+  addGeneratedOutput,
+  updateCaseStatus,
+} from "@/lib/supabase/helpers";
 import type { Citation, EscalationRoute } from "@/lib/types";
 import type { ExtractedFacts } from "./extraction";
 import type { EvaluationResult } from "./evaluation";
-import type { TimelineEntry } from "./timeline";
 import type { RetrievalStepResult } from "./retrieval-step";
+import type { TimelineEntry } from "./timeline";
 
 const BASE_INSTRUCTION = `You are a consumer redressal assistant for Indian consumers.
 Write professional, clear, and actionable content.
@@ -37,14 +41,13 @@ export async function stepOutputGeneration(
     ...retrieval.regulation.citations,
   ];
 
-  const citationsJson = allCitations.map((c) => ({
-    source_title: c.source_title,
-    section_label: c.section_label,
-    excerpt: c.excerpt,
-    source_type: c.source_type,
+  const citationsJson = allCitations.map((citation) => ({
+    source_title: citation.source_title,
+    section_label: citation.section_label,
+    excerpt: citation.excerpt,
+    source_type: citation.source_type,
   }));
 
-  // 1. Case Summary
   const caseSummary = await generateCaseSummary(facts, timeline, evaluation);
   await addGeneratedOutput({
     case_id: caseId,
@@ -54,7 +57,6 @@ export async function stepOutputGeneration(
     citations: citationsJson,
   });
 
-  // 2. Grievance Email
   const grievanceEmail = await generateGrievanceEmail(facts, evaluation, routes);
   await addGeneratedOutput({
     case_id: caseId,
@@ -64,7 +66,6 @@ export async function stepOutputGeneration(
     citations: citationsJson,
   });
 
-  // 3. Escalation Note
   const escalationNote = await generateEscalationNote(evaluation, routes);
   await addGeneratedOutput({
     case_id: caseId,
@@ -74,7 +75,6 @@ export async function stepOutputGeneration(
     citations: citationsJson,
   });
 
-  // 4. Evidence Checklist
   const evidenceChecklist = generateEvidenceChecklist(facts, evaluation);
   await addGeneratedOutput({
     case_id: caseId,
@@ -84,7 +84,6 @@ export async function stepOutputGeneration(
     citations: [],
   });
 
-  // 5. Evidence Pack Preview
   const packPreview = generateEvidencePackPreview(facts, timeline, evaluation, routes);
   await addGeneratedOutput({
     case_id: caseId,
@@ -94,19 +93,17 @@ export async function stepOutputGeneration(
     citations: citationsJson,
   });
 
-  // Update status and emit event
   await updateCaseStatus(caseId, "complete");
 
   await addCaseEvent({
     case_id: caseId,
     event_type: "outputs_generated",
     title: "All outputs generated",
-    detail: "Case summary, grievance email, escalation note, evidence checklist, and evidence pack preview generated",
+    detail:
+      "Case summary, grievance email, escalation note, evidence checklist, and evidence pack preview generated",
     metadata: { output_count: 5 },
   });
 }
-
-// ---- Individual output generators ----
 
 async function generateCaseSummary(
   facts: ExtractedFacts,
@@ -114,8 +111,8 @@ async function generateCaseSummary(
   evaluation: EvaluationResult
 ): Promise<string> {
   const timelineText = timeline
-    .filter((t) => t.date)
-    .map((t) => `- ${t.date}: ${t.label}`)
+    .filter((entry) => entry.date)
+    .map((entry) => `- ${entry.date}: ${entry.label}`)
     .join("\n");
 
   const prompt = `Write a professional case summary for this consumer complaint.
@@ -158,8 +155,8 @@ CONSUMER ACTIONS ALREADY TAKEN: ${facts.consumer_actions_taken.join(", ") || "No
 DESIRED RESOLUTION: ${facts.desired_resolution ?? "Full refund and compensation as applicable"}
 
 VIOLATIONS TO CITE:
-${evaluation.consumer_rights_violated.map((v) => `- ${v}`).join("\n")}
-${evaluation.regulatory_violations.map((v) => `- ${v}`).join("\n")}
+${evaluation.consumer_rights_violated.map((item) => `- ${item}`).join("\n")}
+${evaluation.regulatory_violations.map((item) => `- ${item}`).join("\n")}
 
 Write a formal email with:
 - Subject line
@@ -182,8 +179,8 @@ async function generateEscalationNote(
 ): Promise<string> {
   const routeList = routes
     .map(
-      (r, i) =>
-        `${i + 1}. **${r.target_name}** (${r.target})\n   Contact: ${r.contact_info ?? "N/A"}\n   Rationale: ${r.rationale}`
+      (route, index) =>
+        `${index + 1}. **${route.target_name}** (${route.target})\n   Contact: ${route.contact_info ?? "N/A"}\n   Rationale: ${route.rationale}`
     )
     .join("\n\n");
 
@@ -213,7 +210,6 @@ function generateEvidenceChecklist(
 ): string {
   const items: string[] = [];
 
-  // Standard items
   items.push("- [ ] Original complaint description / screenshot");
   items.push("- [ ] Order confirmation / booking reference");
 
@@ -225,22 +221,24 @@ function generateEvidenceChecklist(
     items.push("- [ ] Communication history with dates");
   }
 
-  // Category-specific items
-  if (facts.merchant_name?.toLowerCase().includes("indigo") ||
-      facts.complaint_summary.toLowerCase().includes("flight")) {
+  if (
+    facts.merchant_name?.toLowerCase().includes("indigo") ||
+    facts.complaint_summary.toLowerCase().includes("flight")
+  ) {
     items.push("- [ ] Boarding pass / e-ticket");
     items.push("- [ ] Flight cancellation / delay notification");
     items.push("- [ ] Airline response to complaints (if any)");
   }
 
-  if (facts.complaint_summary.toLowerCase().includes("damaged") ||
-      facts.complaint_summary.toLowerCase().includes("defective")) {
+  if (
+    facts.complaint_summary.toLowerCase().includes("damaged") ||
+    facts.complaint_summary.toLowerCase().includes("defective")
+  ) {
     items.push("- [ ] Photos of damaged/defective product");
     items.push("- [ ] Unboxing video (if available)");
     items.push("- [ ] Product packaging photos");
   }
 
-  // Based on evaluation
   if (evaluation.consumer_rights_violated.length > 0) {
     items.push("- [ ] Copy of relevant policy / terms referenced");
   }
@@ -254,47 +252,110 @@ function generateEvidenceChecklist(
   return `# Evidence Checklist\n\nGather these documents to strengthen your complaint:\n\n${items.join("\n")}`;
 }
 
+interface InternalEvidencePack {
+  agentVerification: {
+    assessment: string;
+    evidenceTypesDetected: string[];
+  };
+  confirmedFacts: {
+    merchant: string;
+    product_or_service: string;
+    order_id: string;
+    amount: string;
+  };
+  keyIssues: string[];
+  timeline: { date: string; event: string }[];
+  verifiedViolations: {
+    consumerRights: string[];
+    merchantObligationsUnmet: string[];
+  };
+  missingEvidenceGaps: string[];
+  escalationPath: string[];
+  recommendedSteps: string[];
+}
+
 function generateEvidencePackPreview(
   facts: ExtractedFacts,
   timeline: TimelineEntry[],
   evaluation: EvaluationResult,
   routes: EscalationRoute[]
 ): string {
-  const timelineText = timeline
-    .filter((t) => t.date)
-    .map((t) => `| ${t.date} | ${t.label} |`)
-    .join("\n");
+  
+  // 1. Assemble the Strongly-Typed Context Layer
+  const internalPack: InternalEvidencePack = {
+    agentVerification: {
+      assessment: evaluation.overall_assessment.toUpperCase(),
+      evidenceTypesDetected: facts.evidence_types_present?.length ? facts.evidence_types_present : ["None Detected"],
+    },
+    confirmedFacts: {
+      merchant: facts.merchant_name ?? "Unknown",
+      product_or_service: facts.product_or_service ?? "Not specified",
+      order_id: facts.order_id ?? "Not provided",
+      amount: facts.amount ? `INR ${facts.amount}` : "Not specified",
+    },
+    keyIssues: facts.issues,
+    timeline: timeline.filter(t => t.date).map(t => ({ date: t.date, event: t.label })),
+    verifiedViolations: {
+      consumerRights: evaluation.consumer_rights_violated,
+      merchantObligationsUnmet: evaluation.merchant_obligations_unmet,
+    },
+    missingEvidenceGaps: deriveEvidenceGapLines(facts, evaluation),
+    escalationPath: routes.map((r, i) => `${i + 1}. **${r.target_name}**: ${r.contact_info ?? "N/A"}`),
+    recommendedSteps: evaluation.recommended_actions,
+  };
 
+  // 2. Render from Context (Pure Presentation)
   return `# Evidence Pack Preview
 
-## Complaint Overview
-- **Merchant**: ${facts.merchant_name ?? "Unknown"}
-- **Product/Service**: ${facts.product_or_service ?? "Not specified"}
-- **Order Reference**: ${facts.order_id ?? "Not provided"}
-- **Amount**: ${facts.amount ? `INR ${facts.amount}` : "Not specified"}
-- **Assessment**: ${evaluation.overall_assessment.toUpperCase()}
+### 1. Confirmed Facts
+- **Merchant**: ${internalPack.confirmedFacts.merchant}
+- **Product/Service**: ${internalPack.confirmedFacts.product_or_service}
+- **Order Reference**: ${internalPack.confirmedFacts.order_id}
+- **Amount**: ${internalPack.confirmedFacts.amount}
+- **Evidence Attached**: ${internalPack.agentVerification.evidenceTypesDetected.join(", ")}
+- **Case Assessment**: ${internalPack.agentVerification.assessment}
 
-## Issues Identified
-${facts.issues.map((i) => `- ${i}`).join("\n")}
+**Issues Identified:**
+${internalPack.keyIssues.map((issue) => `- ${issue}`).join("\n") || "- None explicitly documented"}
 
-## Timeline
+### 2. Timeline
 | Date | Event |
 |------|-------|
-${timelineText || "| - | No dated events |"}
+${internalPack.timeline.length > 0 
+  ? internalPack.timeline.map((entry) => `| ${entry.date} | ${entry.event} |`).join("\n") 
+  : "| - | No dated events identified by AI |"
+}
 
-## Rights & Violations
-### Consumer Rights Violated
-${evaluation.consumer_rights_violated.map((v) => `- ${v}`).join("\n") || "- None specifically identified"}
+### 3. Confirmed Violations
+**Consumer Rights Violated:**
+${internalPack.verifiedViolations.consumerRights.map((v) => `- ${v}`).join("\n") || "- None specifically identified by pipeline"}
 
-### Merchant Obligations Unmet
-${evaluation.merchant_obligations_unmet.map((o) => `- ${o}`).join("\n") || "- None specifically identified"}
+**Merchant Obligations Unmet:**
+${internalPack.verifiedViolations.merchantObligationsUnmet.map((o) => `- ${o}`).join("\n") || "- None specifically identified by pipeline"}
 
-## Escalation Path
-${routes.map((r, i) => `${i + 1}. **${r.target_name}**: ${r.contact_info ?? "N/A"}`).join("\n")}
+### 4. Likely Supporting Evidence Still Missing
+${internalPack.missingEvidenceGaps.join("\n")}
 
-## Recommended Actions
-${evaluation.recommended_actions.map((a) => `- ${a}`).join("\n")}
+### 5. Escalation Path
+${internalPack.escalationPath.join("\n")}
+
+**Recommended Next Steps:**
+${internalPack.recommendedSteps.map((action) => `- ${action}`).join("\n")}
 
 ---
-*Generated by Redressa AI — not legal advice. Review all content before submission.*`;
+*** DRAFT PREVIEW ONLY - Not for final legal filing. Generated by Redressa AI. ***`;
+}
+
+function deriveEvidenceGapLines(
+  facts: ExtractedFacts,
+  evaluation: EvaluationResult
+): string[] {
+  const checklist = generateEvidenceChecklist(facts, evaluation)
+    .split("\n")
+    .filter((line) => line.startsWith("- [ ] "))
+    .map((line) => line.replace("- [ ] ", "- "));
+
+  return checklist.length > 0
+    ? checklist
+    : ["- No obvious documentation gaps were identified from the current complaint details."];
 }

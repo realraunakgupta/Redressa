@@ -15,7 +15,7 @@ export interface IntakeInput {
   order_reference?: string | null;
   amount?: number | null;
   is_demo?: boolean;
-  files?: { name: string; type: string; size: number }[];
+  files?: { name: string; type: string; size: number; storage_path: string }[];
 }
 
 export async function stepIntake(input: IntakeInput): Promise<CaseRow> {
@@ -44,8 +44,8 @@ export async function stepIntake(input: IntakeInput): Promise<CaseRow> {
         case_id: caseRow.id,
         file_name: file.name,
         file_type: file.type.includes("pdf") ? "pdf" : file.type.includes("image") ? "image" : "text",
-        storage_path: "demo/stub/" + file.name,
-        file_url: "stub_file_url",
+        storage_path: file.storage_path,
+        file_url: "", // We use storage_path physically, not absolute URLs usually
         mime_type: file.type,
         file_size: file.size,
       });

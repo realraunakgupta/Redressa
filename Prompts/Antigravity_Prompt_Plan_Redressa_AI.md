@@ -16,6 +16,11 @@ Before starting:
 Important rule:
 - after every major milestone, update `PROJECT_STATE.md`
 
+Current reconciliation note for this repo:
+- the working live baseline now uses `Groq` as the active provider instead of `Gemini`
+- keep provider-specific code behind adapters
+- if reusing this plan against the current repo, treat `Groq` as the default active provider unless you intentionally change it
+
 ---
 
 ## Prompt 1 - Inspect, lock context, create build plan
@@ -122,7 +127,7 @@ Locked stack:
 - TypeScript
 - Tailwind
 - Supabase
-- Gemini API
+- Groq API behind a provider adapter
 - Vercel deployment target
 
 Rules:
@@ -453,6 +458,7 @@ Rules:
 - preserve the working Phase 1 flow
 - prefer improvements that increase trust, clarity, and perceived intelligence
 - do not add Phase 3 features yet
+- it is acceptable to stop after only some Prompt 11 items if the baseline stays safer that way; in that case, record exactly which items remain pending in `PROJECT_STATE.md`
 
 At the end:
 - summarize which Phase 2 features were added

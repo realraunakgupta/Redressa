@@ -148,9 +148,9 @@ create index idx_generated_outputs_case on generated_outputs(case_id);
 -- ============================================
 -- Storage bucket for evidence files
 -- ============================================
--- Run this separately if needed, or create via Supabase dashboard:
--- insert into storage.buckets (id, name, public)
--- values ('evidence', 'evidence', false);
+insert into storage.buckets (id, name, public)
+values ('evidence', 'evidence', false)
+on conflict (id) do nothing;
 
 -- ============================================
 -- Row Level Security (minimal, no auth)
@@ -180,3 +180,26 @@ create policy "anon_insert_case_files" on case_files for insert with check (true
 
 -- Service role bypasses RLS automatically, so server-side
 -- operations (pipeline writes) work without extra policies.
+
+-- Storage policies for browser uploads (no auth hackathon flow)
+do $$
+begin
+  create policy "anon_insert_evidence_objects"
+    on storage.objects
+    for insert
+    to anon
+    with check (bucket_id = 'evidence');
+exception
+  when duplicate_object then null;
+end $$;
+
+do $$
+begin
+  create policy "anon_select_evidence_objects"
+    on storage.objects
+    for select
+    to anon
+    using (bucket_id = 'evidence');
+exception
+  when duplicate_object then null;
+end $$;

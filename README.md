@@ -17,6 +17,13 @@
 | AI | Groq API via provider adapter |
 | Deployment | Vercel |
 
+## Current Baseline
+
+- The live pipeline is working with Groq as the active provider.
+- The seeded demo path remains the safest fallback for judges.
+- The current codebase now includes real file upload to Supabase Storage and a vision-capable parsing path for image/screenshot files.
+- PDF parsing is still intentionally limited.
+
 ## Getting Started
 
 ### Prerequisites
@@ -61,18 +68,19 @@ Then fill in your credentials in `.env.local`:
 2. Go to **SQL Editor** in the Supabase dashboard
 3. Paste the contents of `supabase/schema.sql`
 4. Click **Run** to create all tables
-5. (Optional) Go to **Storage** and create a bucket named `evidence` (set to private)
-6. Verify: visit `/api/health` — the `supabase` check should show `"ok"`
+5. Go to **Storage** and ensure a bucket named `evidence` exists (private is fine)
+6. If you are applying `supabase/schema.sql` from scratch, it now provisions the bucket and basic anon storage policies needed for browser uploads
+7. Verify: visit `/api/health` and confirm the Supabase check shows `"ok"`
 
 ### Project Structure
 
-```
+```text
 app/                    # Next.js App Router pages and API routes
   api/health/           # Health check endpoint
   case/[id]/            # Dynamic case page
 components/             # Reusable UI components
 lib/                    # Core logic
-  gemini/               # Gemini AI provider adapter
+  groq/                 # Groq AI provider adapter
   pipeline/             # Agent pipeline orchestrator
   supabase/             # Supabase client setup
   types/                # TypeScript type definitions
@@ -96,10 +104,10 @@ Quick version:
 
 | Variable | Required Now? |
 |----------|:------------:|
-| `NEXT_PUBLIC_SUPABASE_URL` | ✅ |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✅ |
-| `SUPABASE_SERVICE_ROLE_KEY` | ✅ |
-| `GEMINI_API_KEY` | ⏳ Later |
+| `NEXT_PUBLIC_SUPABASE_URL` | Yes |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes |
+| `GROQ_API_KEY` | Yes |
 
 4. Click **Deploy**
 5. Verify at `/status` and `/api/health`

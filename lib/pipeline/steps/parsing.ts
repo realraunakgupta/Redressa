@@ -8,6 +8,7 @@
 
 import { getCaseFiles, addCaseEvent } from "@/lib/supabase/helpers";
 import { createServerSupabaseClient } from "@/lib/supabase/client";
+import { generateVision } from "@/lib/groq/client";
 
 export interface ParsedEvidence {
   file_id: string;
@@ -19,21 +20,45 @@ export interface ParsedEvidence {
 export async function stepParsing(caseId: string): Promise<ParsedEvidence[]> {
   const files = await getCaseFiles(caseId);
   const parsed: ParsedEvidence[] = [];
+  const supabase = createServerSupabaseClient();
 
   for (const file of files) {
     let text = file.parsed_text ?? "";
+    const isImageFile =
+      file.file_type === "image" ||
+      file.file_type === "screenshot" ||
+      file.mime_type?.startsWith("image/") === true;
 
-    // For Phase 1, if parsed_text is already set (e.g. pasted text), use it.
-    // For PDF/image files, this is a stub — real OCR/parsing comes in Phase 2.
-    if (!text && file.file_type === "text") {
-      text = "[Text content available but not yet extracted]";
-    } else if (!text) {
-      text = `[${file.file_type.toUpperCase()} parsing not yet implemented — file: ${file.file_name}]`;
+    if (!text && file.storage_path && !file.storage_path.startsWith("demo/stub/")) {
+      try {
+        const { data, error } = await supabase.storage.from("evidence").download(file.storage_path);
+        if (error || !data) throw new Error("Storage download failed");
+
+        if (isImageFile) {
+          const buffer = Buffer.from(await data.arrayBuffer());
+          const base64Image = buffer.toString("base64");
+          const mimeType = file.mime_type || "image/jpeg";
+          
+          text = await generateVision({
+            prompt: "Extract all visible text, numbers, dates, and core context from this screenshot or document image. Output only the extracted information cleanly.",
+            base64Image,
+            mimeType
+          });
+        } else if (file.file_type === "text" || file.mime_type?.includes("text")) {
+          text = await data.text();
+        } else if (file.file_type === "pdf") {
+          text = `[PDF Parsing explicitly disabled to preserve dependency stability. File: ${file.file_name}]`;
+        }
+      } catch (err) {
+        console.error(`[Redressa] Parsing failed for ${file.file_name}:`, err);
+        text = `[Error parsing file during extraction: ${file.file_name}]`;
+      }
+    } else if (!text && file.storage_path?.startsWith("demo/stub/")) {
+       // Demo file seed passthrough
+       text = `[Demo content simulated for ${file.file_name}]`;
     }
 
-    // Update the file record with parsed text if it wasn't set
     if (!file.parsed_text && text) {
-      const supabase = createServerSupabaseClient();
       await supabase
         .from("case_files")
         .update({ parsed_text: text })

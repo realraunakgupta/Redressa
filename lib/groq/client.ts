@@ -6,9 +6,17 @@
  * into reliable JSON reasoning via Llama 3 models.
  */
 
+interface GroqVisionContentPart {
+  type: "text" | "image_url";
+  text?: string;
+  image_url?: {
+    url: string;
+  };
+}
+
 interface GroqMessage {
   role: "system" | "user" | "assistant";
-  content: string;
+  content: string | GroqVisionContentPart[];
 }
 
 function getApiKey(): string {
@@ -117,4 +125,30 @@ export async function generateJSON<T = Record<string, unknown>>(options: {
     }
     throw new Error(`[Redressa] Failed to parse raw Groq JSON response: ${text.slice(0, 200)}`);
   }
+}
+
+/**
+ * Extract text from images using Llama 3 Vision.
+ */
+export async function generateVision(options: {
+  prompt: string;
+  base64Image: string;
+  mimeType: string;
+}): Promise<string> {
+  const text = await groqFetch({
+    model: "llama-3.2-90b-vision-preview",
+    messages: [
+      {
+        role: "user",
+        content: [
+          { type: "text", text: options.prompt },
+          { type: "image_url", image_url: { url: `data:${options.mimeType};base64,${options.base64Image}` } }
+        ]
+      }
+    ],
+    temperature: 0.2, // Low temperature for extraction accuracy
+    max_completion_tokens: 1024,
+  });
+
+  return text;
 }
