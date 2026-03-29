@@ -66,8 +66,8 @@ export async function stepParsing(caseId: string): Promise<ParsedEvidence[]> {
 
           // Compress large images to fit OCR.space free-tier 1024KB limit.
           // Strategy: grayscale (drops ~60% size without hurting text) then
-          // progressively reduce quality/resolution until under the limit.
-          const OCR_MAX_BYTES = 950 * 1024; // Stay safely under 1024KB
+          // progressively reduce quality/resolution until under the limit. (700KB max raw before Base64 inflation)
+          const OCR_MAX_BYTES = 700 * 1024; 
           if (isImageFile && fileBytes.length > OCR_MAX_BYTES) {
             let quality = 85;
             let maxDim = 2000;

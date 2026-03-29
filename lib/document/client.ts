@@ -11,11 +11,11 @@
 
 function getApiKey(): string {
   const apiKey = process.env.OCR_SPACE_API_KEY;
-  if (!apiKey) {
-    throw new Error(
-      "[Redressa] Missing OCR_SPACE_API_KEY. " +
-        "Copy .env.example to .env.local and add your OCR.space API key for Document Extraction."
+  if (!apiKey || apiKey.trim() === "") {
+    console.warn(
+      "[Redressa] Missing OCR_SPACE_API_KEY in environment. Falling back to public free-tier key 'helloworld'."
     );
+    return "helloworld";
   }
   return apiKey;
 }
