@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { isSupabaseConfigured, isGeminiConfigured } from "@/lib/env";
+import { isSupabaseConfigured, isGroqConfigured } from "@/lib/env";
 
 /**
  * /status - Deployment status page
@@ -11,8 +11,8 @@ import { isSupabaseConfigured, isGeminiConfigured } from "@/lib/env";
  */
 export default function StatusPage() {
   const supabase = isSupabaseConfigured();
-  const gemini = isGeminiConfigured();
-  const allGood = supabase && gemini;
+  const groq = isGroqConfigured();
+  const allGood = supabase && groq;
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-6">
@@ -42,9 +42,9 @@ export default function StatusPage() {
               hint="Set NEXT_PUBLIC_SUPABASE_URL and keys in env vars"
             />
             <ServiceCheck
-              name="Gemini (AI)"
-              configured={gemini}
-              hint="Set GEMINI_API_KEY in env vars"
+              name="Groq (AI)"
+              configured={groq}
+              hint="Set GROQ_API_KEY in env vars"
             />
             <ServiceCheck
               name="App Deployment"

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isSupabaseConfigured, isGeminiConfigured } from "@/lib/env";
+import { isSupabaseConfigured, isGroqConfigured } from "@/lib/env";
 
 /**
  * GET /api/health
@@ -10,8 +10,7 @@ import { isSupabaseConfigured, isGeminiConfigured } from "@/lib/env";
  */
 export async function GET() {
   const supabaseOk = isSupabaseConfigured();
-  const geminiOk = isGeminiConfigured();
-
+  const groqOk = isGroqConfigured();
   let supabaseStatus: "ok" | "not_configured" | "error" = supabaseOk
     ? "ok"
     : "not_configured";
@@ -29,13 +28,13 @@ export async function GET() {
   }
 
   const status = {
-    status: supabaseOk && geminiOk ? "ok" : "degraded",
+    status: supabaseOk && groqOk ? "ok" : "degraded",
     app: "redressa-ai",
     version: "0.1.0",
     timestamp: new Date().toISOString(),
     checks: {
       supabase: supabaseStatus,
-      gemini: geminiOk ? "ok" : "not_configured",
+      groq: groqOk ? "ok" : "not_configured",
     },
   };
 

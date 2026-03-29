@@ -14,7 +14,7 @@
 | Frontend / App | Next.js 16 App Router + TypeScript + Tailwind v4 |
 | Backend | Server-side logic inside Next.js (route handlers + server components) |
 | Database + Storage | Supabase (PostgreSQL + Storage) |
-| AI | Gemini API via provider adapter |
+| AI | Groq API via provider adapter |
 | Deployment | Vercel |
 
 ## Getting Started
@@ -24,7 +24,7 @@
 - Node.js 18+
 - npm
 - A Supabase project (free tier is fine)
-- A Gemini API key
+- A Groq API key
 
 ### Local Setup
 
@@ -53,7 +53,7 @@ Then fill in your credentials in `.env.local`:
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase Dashboard > Project Settings > API > Project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase Dashboard > Project Settings > API > anon/public key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase Dashboard > Project Settings > API > service_role key |
-| `GEMINI_API_KEY` | [Google AI Studio](https://aistudio.google.com/apikey) |
+| `GROQ_API_KEY` | [Groq Console](https://console.groq.com/keys) |
 
 ### Supabase Database Setup
 

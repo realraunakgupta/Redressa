@@ -22,10 +22,10 @@
 - Frontend/App: Next.js App Router + TypeScript + Tailwind
 - Backend logic: inside the Next.js app
 - Database + Storage: Supabase
-- AI provider: Gemini API behind a small provider adapter
+- AI provider: Groq API behind a small provider adapter
 - Parsing:
   - deterministic PDF parsing first
-  - Gemini multimodal extraction for screenshots/images when needed
+  - Groq (Llama 3) extraction for documents
 - Retrieval:
   - curated policy/regulation chunk store first
   - optional vector retrieval later
@@ -165,7 +165,7 @@ The project is in a good hackathon state when:
 | Final polish | Not started |
 
 **Open Blockers:**
-- The deployed Gemini API key is currently quota-blocked, so the live pipeline returns 429/quota errors until quota is restored or the key is replaced
+- **RESOLVED**: AI Provider Free-Tier Timeout Limit. Migrated the backend adapter from Gemini to Groq (Llama 3.3 70B) to bypass Vercel timeout errors caused by 15 RPM limits on rapid pipeline testing. The architecture remains fully strictly locked in Phase 1 otherwise.
 - File selection is now visible in the intake flow, but file contents are not uploaded or parsed yet
 - The most reliable demo path is still the text-first seeded/live complaint flow
 

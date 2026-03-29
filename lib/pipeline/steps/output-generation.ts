@@ -11,7 +11,7 @@
  * Uses Gemini for text generation, grounded in evaluation + retrieved policies.
  */
 
-import { generateText } from "@/lib/gemini/client";
+import { generateText } from "@/lib/groq/client";
 import { addCaseEvent, addGeneratedOutput, updateCaseStatus } from "@/lib/supabase/helpers";
 import type { Citation, EscalationRoute } from "@/lib/types";
 import type { ExtractedFacts } from "./extraction";

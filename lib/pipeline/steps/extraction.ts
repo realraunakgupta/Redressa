@@ -5,7 +5,7 @@
  * Outputs normalized data for downstream steps.
  */
 
-import { generateJSON } from "@/lib/gemini/client";
+import { generateJSON } from "@/lib/groq/client";
 import { addCaseEvent } from "@/lib/supabase/helpers";
 import type { ParsedEvidence } from "./parsing";
 

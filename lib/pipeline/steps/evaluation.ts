@@ -5,7 +5,7 @@
  * The evaluation is grounded — every claim references specific policy/regulation sections.
  */
 
-import { generateJSON } from "@/lib/gemini/client";
+import { generateJSON } from "@/lib/groq/client";
 import { addCaseEvent } from "@/lib/supabase/helpers";
 import type { ExtractedFacts } from "./extraction";
 import type { RetrievalStepResult } from "./retrieval-step";
