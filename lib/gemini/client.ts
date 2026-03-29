@@ -36,7 +36,7 @@ export async function generateText(options: {
 }): Promise<string> {
   const client = getClient();
   const model = client.getGenerativeModel({
-    model: "gemini-3.0-flash",
+    model: "gemini-2.0-flash",
     systemInstruction: options.systemInstruction,
     generationConfig: {
       temperature: options.temperature ?? 0.3,
@@ -61,7 +61,7 @@ export async function generateJSON<T = Record<string, unknown>>(options: {
 }): Promise<T> {
   const client = getClient();
   const model = client.getGenerativeModel({
-    model: "gemini-3.0-flash",
+    model: "gemini-2.0-flash",
     systemInstruction: options.systemInstruction,
     generationConfig: {
       temperature: options.temperature ?? 0.1,
