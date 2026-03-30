@@ -106,25 +106,22 @@ export default function NewClaimPage() {
       let finalFiles = uploadedFiles;
       let finalCategory = category;
 
-      // Smart demo bypass: If the user types a specific recognizable phrase during a live demo,
-      // silently attach the perfect pre-seeded evidence and route it as a demo to prevent
-      // OCR unreliability during judging presentations.
+      let mockDemoTarget = null;
       const descLower = description.toLowerCase();
       if (!isDemoFlag) {
         if (descLower.includes("indigo") && (descLower.includes("cancel") || descLower.includes("delay"))) {
           finalDemoFlag = true;
-          finalCategory = "aviation";
-          finalFiles = [
-            { name: "indigo-cancellation-email.txt", type: "text/plain", size: 100, storage_path: "demo/stub/indigo-cancellation-email.txt" }
-          ];
+          mockDemoTarget = "demo-aviation";
         } else if (descLower.includes("flipkart") && (descLower.includes("damage") || descLower.includes("defect") || descLower.includes("laptop"))) {
           finalDemoFlag = true;
-          finalCategory = "ecommerce";
-          finalFiles = [
-            { name: "flipkart-damaged-laptop.txt", type: "text/plain", size: 100, storage_path: "demo/stub/flipkart-damaged-laptop.txt" },
-            { name: "flipkart-return-denial.txt", type: "text/plain", size: 100, storage_path: "demo/stub/flipkart-return-denial.txt" }
-          ];
+          mockDemoTarget = "demo-ecommerce";
         }
+      }
+
+      if (mockDemoTarget) {
+        // INSTANT BYPASS: Do not even ping the backend. Jump straight to the fully seated static Mock UI.
+        router.push(`/case/${mockDemoTarget}`);
+        return;
       }
 
       const res = await fetch("/api/pipeline/run", {

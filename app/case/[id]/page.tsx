@@ -9,6 +9,7 @@ import { GeneratedOutputsPanel } from "./panels/generated-outputs";
 import { EvidencePackPanel } from "./panels/evidence-pack";
 import { EvidenceDebug } from "./panels/evidence-debug";
 import { LeftRail } from "@/app/components/left-rail";
+import { MOCK_AVIATION_CASE, MOCK_ECOMMERCE_CASE } from "@/lib/mock-cases";
 
 export default async function CasePage(props: PageProps<"/case/[id]">) {
   const { id } = await props.params;
@@ -20,20 +21,29 @@ export default async function CasePage(props: PageProps<"/case/[id]">) {
     redirect("/new");
   }
 
-  const data = await loadCasePageData(id);
+  let data: any;
+  if (id === "demo-aviation") {
+    data = MOCK_AVIATION_CASE;
+  } else if (id === "demo-ecommerce") {
+    data = MOCK_ECOMMERCE_CASE;
+  } else {
+    data = await loadCasePageData(id);
+  }
+  
   if (!data) notFound();
 
   const {
     caseRow,
     events,
     outputs,
+    files,
     facts,
     timeline,
     evaluation,
     routes,
     policyCitations,
     regulationCitations,
-  } = data;
+  } = data as any;
 
   const allCitations = [...(policyCitations ?? []), ...(regulationCitations ?? [])];
 
