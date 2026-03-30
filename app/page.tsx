@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { listCases } from "@/lib/supabase";
+import { GlassmorphicBackground } from "./components/glassmorphic-bg";
+import { HeroSection } from "./components/hero-section";
 
 export const dynamic = "force-dynamic";
 
@@ -20,9 +22,11 @@ export default async function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
+      <GlassmorphicBackground />
+
       {/* ── Top Bar ── */}
-      <header className="border-b border-neutral-800 bg-neutral-900">
+      <header className="relative z-10 border-b border-neutral-800/60 bg-neutral-900/70 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
           <Link href="/" className="text-lg font-bold tracking-tight text-neutral-50">
             Redressa<span className="text-primary-500 ml-1">AI</span>
@@ -39,31 +43,9 @@ export default async function HomePage() {
       </header>
 
       {/* ── Workspace Hero ── */}
-      <main className="flex-1">
-        <div className="mx-auto max-w-7xl px-6 py-12">
-          <div className="max-w-2xl">
-            <h1 className="text-3xl font-bold tracking-tight text-neutral-50">
-              Consumer Redressal Workflow
-            </h1>
-            <p className="mt-3 text-base text-neutral-400 leading-relaxed">
-              Turn messy complaint evidence into grounded, escalation-ready claim packages.
-              Upload your evidence, and the agentic pipeline will extract facts, retrieve
-              relevant policies, evaluate your position, and generate action-ready outputs.
-            </p>
-
-            <div className="mt-6 flex items-center gap-4">
-              <Link
-                href="/new"
-                className="rounded-md bg-primary-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-500 transition-colors"
-              >
-                Start New Claim
-              </Link>
-            </div>
-
-            <p className="mt-4 text-xs text-neutral-600">
-              Guidance workflow, not legal advice.
-            </p>
-          </div>
+      <main className="relative z-10 flex-1">
+        <div className="mx-auto max-w-7xl px-6 py-16">
+          <HeroSection />
 
           {/* ── Recent Cases ── */}
           <section className="mt-14">
@@ -144,7 +126,7 @@ export default async function HomePage() {
       </main>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-neutral-800 bg-neutral-900/50">
+      <footer className="relative z-10 border-t border-neutral-800/60 bg-neutral-900/80 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-6 py-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
