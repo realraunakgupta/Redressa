@@ -29,12 +29,6 @@ export default async function HomePage() {
           </Link>
           <div className="flex items-center gap-4">
             <Link
-              href="/status"
-              className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors"
-            >
-              Status
-            </Link>
-            <Link
               href="/new"
               className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500 transition-colors"
             >
@@ -64,16 +58,6 @@ export default async function HomePage() {
               >
                 Start New Claim
               </Link>
-              <div className="flex gap-2">
-                {["Aviation", "E-Commerce"].map((cat) => (
-                  <span
-                    key={cat}
-                    className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-400"
-                  >
-                    {cat}
-                  </span>
-                ))}
-              </div>
             </div>
 
             <p className="mt-4 text-xs text-neutral-600">
@@ -134,9 +118,12 @@ export default async function HomePage() {
                             {c.category ?? "—"}
                           </td>
                           <td className="px-4 py-3 text-xs text-neutral-500 hidden md:table-cell">
-                            {new Date(c.created_at).toLocaleDateString("en-IN", {
+                            {new Date(c.created_at).toLocaleString("en-IN", {
                               day: "numeric",
                               month: "short",
+                              timeZone: "Asia/Kolkata",
+                              hour: "2-digit",
+                              minute: "2-digit",
                             })}
                           </td>
                           <td className="px-4 py-3 text-right">
@@ -167,10 +154,12 @@ export default async function HomePage() {
               </p>
             </div>
             <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-neutral-500">
-              <span>Aviation • E-Commerce</span>
+              <Link href="/status" className="hover:text-neutral-300 transition-colors">
+                System Status
+              </Link>
               <span>Built for Protex Hack-2-Win 2026</span>
               <a
-                href="https://github.com"
+                href="https://github.com/realraunakgupta/Redressa"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-neutral-300 transition-colors"

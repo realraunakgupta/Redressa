@@ -115,10 +115,11 @@ export default async function CasePage(props: PageProps<"/case/[id]">) {
               <span>
                 Filed:{" "}
                 <strong className="text-neutral-300">
-                  {new Date(caseRow.created_at).toLocaleDateString("en-IN", {
+                  {new Date(caseRow.created_at).toLocaleString("en-IN", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
+                    timeZone: "Asia/Kolkata",
                   })}
                 </strong>
               </span>
@@ -128,10 +129,10 @@ export default async function CasePage(props: PageProps<"/case/[id]">) {
           {/* Panel Grid */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="space-y-6 lg:col-span-2">
-              <ExtractedFactsPanel facts={facts} timeline={timeline} />
+              <div id="extraction"><ExtractedFactsPanel facts={facts} timeline={timeline} /></div>
               {showDebug && <EvidenceDebug data={data} />}
-              <GeneratedOutputsPanel outputs={outputs} />
-              <EvidencePackPanel outputs={outputs} />
+              <div id="outputs"><GeneratedOutputsPanel outputs={outputs} /></div>
+              <div id="documents"><EvidencePackPanel outputs={outputs} /></div>
             </div>
 
             <div className="space-y-6">

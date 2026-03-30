@@ -1,93 +1,95 @@
 # Deployment Guide - Redressa AI
 
-> Beginner-friendly checklist for deploying to Vercel.
-
----
+> Step-by-step guide for deploying the current Groq + OCR.space build to Vercel.
 
 ## Prerequisites
 
-Before you start, make sure you have:
+Before deploying, make sure you have:
 
-- [ ] A GitHub account
-- [ ] This repo pushed to a GitHub repository
-- [ ] A Supabase project (free tier at [supabase.com](https://supabase.com))
-- [ ] Your Supabase schema created (run `supabase/schema.sql` in the SQL Editor)
-- [ ] A Vercel account (free at [vercel.com](https://vercel.com))
+- A GitHub account
+- This repo pushed to GitHub
+- A Supabase project
+- The Supabase schema applied from `supabase/schema.sql`
+- A Vercel account
+- A Groq API key
+- An OCR.space API key
 
----
-
-## Step-by-Step Deployment
-
-### 1. Push to GitHub
+## 1. Push to GitHub
 
 ```powershell
 git init
 git add .
-git commit -m "Initial commit - Redressa AI scaffold"
+git commit -m "Initial commit"
 git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
 git push -u origin main
 ```
 
-### 2. Import in Vercel
+## 2. Import into Vercel
 
-1. Go to [vercel.com/new](https://vercel.com/new)
-2. Click **Import Git Repository**
-3. Select your GitHub repo
-4. Vercel auto-detects Next.js — no framework changes needed
-5. **Before clicking Deploy**, add environment variables (next step)
+1. Go to `https://vercel.com/new`
+2. Import the GitHub repository
+3. Let Vercel detect Next.js automatically
+4. Before deploying, add the required environment variables
 
-### 3. Set Environment Variables
+## 3. Add Environment Variables
 
-In the Vercel import screen, expand **Environment Variables** and add:
+Add these values in Vercel Project Settings > Environment Variables:
 
 | Name | Value | Required |
-|------|-------|----------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL | ✅ Yes |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon/public key | ✅ Yes |
-| `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase service_role key | ✅ Yes |
-| `GROQ_API_KEY` | Your Groq API key | ✅ Yes |
-| `OCR_SPACE_API_KEY` | Your OCR.space API key | ✅ Yes |
+|------|-------|:--------:|
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL | Yes |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon/public key | Yes |
+| `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase service role key | Yes |
+| `GROQ_API_KEY` | Your Groq API key | Yes |
+| `OCR_SPACE_API_KEY` | Your OCR.space API key | Yes |
 
-> **Where to find Supabase keys:** Dashboard → Project Settings → API
->
-> **Where to get Groq key:** [Groq Console](https://console.groq.com/keys)
->
-> **Where to get OCR.space key:** [OCR.space](https://ocr.space/OCRAPI)
+Where to find them:
 
-### 4. Deploy
+- Supabase keys: Dashboard > Project Settings > API
+- Groq key: [Groq Console](https://console.groq.com/keys)
+- OCR.space key: [OCR.space](https://ocr.space/OCRAPI)
+
+## 4. Deploy
 
 1. Click **Deploy**
-2. Wait for the build to complete (should take ~30 seconds)
-3. Vercel gives you a URL like `https://your-app.vercel.app`
+2. Wait for the build to complete
+3. Open the generated Vercel URL
 
-### 5. Verify
+## 5. Verify the Deployment
 
-Visit these URLs on your deployed app:
+Check:
 
-| URL | What you should see |
-|-----|-------------------|
-| `/` | Homepage with "Redressa AI" title |
-| `/status` | Service status page showing configured services |
-| `/api/health` | JSON with `status: "ok"` or `"degraded"` |
+| URL | Expected Result |
+|-----|-----------------|
+| `/` | Landing page loads normally |
+| `/new` | New-claim workspace loads |
+| `/api/health` | Service health JSON returns successfully |
+| `/case/[id]?debug=1` | Debug panel appears only when explicitly requested |
 
----
+## Redeploying Later
 
-## Redeploying After Changes
+Pushing new commits to the connected branch should trigger a redeploy automatically.
 
-After pushing new commits to GitHub, Vercel auto-deploys. No manual steps needed.
+To force a redeploy after only changing environment variables:
 
-To force a redeploy without code changes (e.g., after updating env vars):
-1. Vercel Dashboard → your project → **Deployments**
-2. Click the `...` menu on the latest deployment
-3. Click **Redeploy**
-
----
+1. Open the Vercel dashboard
+2. Open your project
+3. Go to **Deployments**
+4. Choose the latest deployment
+5. Click **Redeploy**
 
 ## Troubleshooting
 
 | Problem | Fix |
 |---------|-----|
-| Build fails | Check the build log in Vercel — most likely a TypeScript error |
-| `/api/health` shows `supabase: "error"` | Check that your Supabase URL and keys are correct in Vercel env vars |
-| `/api/health` shows `supabase: "not_configured"` | You haven't added the Supabase env vars in Vercel yet |
-| Page is blank / 500 error | Check Vercel function logs (Deployments → latest → Functions tab) |
+| Build fails | Check the Vercel build logs for TypeScript or lint failures |
+| `/api/health` shows Supabase not configured | Recheck the Supabase env vars |
+| OCR on uploaded images fails | Recheck `OCR_SPACE_API_KEY` and file size limits |
+| Reasoning/output generation fails | Recheck `GROQ_API_KEY` |
+| Live UI is stale | Confirm the latest branch was deployed and redeploy if needed |
+
+## Important Notes
+
+- Uploaded image OCR is the verified path.
+- PDF OCR is best-effort under OCR.space free-tier constraints.
+- Hidden sample cases remain available from the new-claim page if live OCR is unstable during a demo.

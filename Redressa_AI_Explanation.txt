@@ -1,0 +1,47 @@
+=========================================
+REDRESSA AI - PROJECT OVERVIEW
+=========================================
+
+1. WHAT IS REDRESSA AI?
+-----------------------
+Redressa AI is an intelligent "agentic workflow" tool designed to help everyday consumers fight back when they are wronged by companies (like when a flight is cancelled or an online order arrives damaged). 
+
+Usually, consumers have messy evidence—a disorganized story, a few blurry screenshots of emails, or a PDF receipt. Redressa AI takes all this unstructured, chaotic information and automatically translates it into a highly professional, structured, and legally-grounded claim package.
+
+2. THE PROBLEM IT SOLVES
+------------------------
+When you complain to a massive corporation, your email goes into a huge queue. If your complaint is emotional, missing key dates, or doesn't explicitly cite the company's own return policy, it is easily dismissed by customer service bots or tier-1 agents. Consumers rarely know the exact legal regulations or company policies that protect them.
+
+3. HOW IT WORKS (THE AI PIPELINE)
+---------------------------------
+Redressa doesn't just act like a standard ChatGPT wrapper; it follows a strict, multi-step "agent" pipeline:
+
+Step A: INTAKE & PARSING (The "Eyes")
+You type a brief description and upload your evidence (like a screenshot of a Flipkart refund denial or an IndiGo flight cancellation email). 
+- An AI OCR (Optical Character Recognition) engine reads the text hidden inside your images and turns it into readable data.
+
+Step B: EXTRACTION (The "Brain")
+Our main reasoning AI reads your story and the extracted text from your images. It pulls out the raw facts: Who is the merchant? What is the order number? How much money is involved? It then builds a clean, chronological timeline of events, removing all the emotional clutter.
+
+Step C: RAG & KNOWLEDGE RETRIEVAL (The "Lawyer")
+The system looks at your problem and digs through a database of actual company policies and government regulations (like the DGCA Passenger Charter). It retrieves the exact legal rules that apply specifically to your situation.
+
+Step D: EVALUATION & ROUTING (The "Judge")
+The AI acts as an independent judge. It compares your timeline of facts against the actual company policy. It identifies exactly where the company violated its own rules, and recommends the best "escalation route" (e.g., escalating to the Grievance Officer or the Nodal Officer).
+
+Step E: AUTOMATED OUTPUTS (The "Secretary")
+Finally, Redressa generates the actual ammunition you need exclusively based on the facts:
+- A perfectly drafted, professional Grievance Email ready to be sent.
+- An Internal Escalation Note summarizing the legal context.
+- An Evidence Checklist proving you have the necessary documentation.
+
+4. WHAT MAKES IT SPECIAL? (THE TECH STACK)
+------------------------------------------
+- Next.js 16 & React: Handles the beautiful, professional user interface layout.
+- Supabase: Acts as the database storing the legal policies and tracking the cases securely.
+- Groq AI (Llama 3): Provides incredibly fast, human-level reasoning to evaluate the claims and generate the emails.
+- OCR.space: specialized Vision pipeline that strictly handles extracting words from user image uploads.
+
+SUMMARY
+-------
+Instead of telling a chatbot "I'm mad at the airline," Redressa acts as an automated paralegal. It reads your raw receipts, finds the exact airline policy you didn't know existed, proves the airline broke it, and writes the exact email you need to get your money back.
