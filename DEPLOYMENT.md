@@ -1,4 +1,4 @@
-# Deployment Guide - Redressa AI
+# Deployment Guide - Redressa
 
 > Step-by-step guide for deploying the current Groq + OCR.space build to Vercel.
 
@@ -42,12 +42,36 @@ Add these values in Vercel Project Settings > Environment Variables:
 | `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase service role key | Yes |
 | `GROQ_API_KEY` | Your Groq API key | Yes |
 | `OCR_SPACE_API_KEY` | Your OCR.space API key | Yes |
+| `AUTH_GOOGLE_ID` or `GOOGLE_CLIENT_ID` | Google OAuth Client ID for Gmail API | Required for Sending |
+| `AUTH_GOOGLE_SECRET` or `GOOGLE_CLIENT_SECRET` | Google OAuth Client Secret for Gmail API | Required for Sending |
+| `CRON_SECRET` | Secure key to authenticate Vercel Cron jobs | Required for Autopilot |
+| `GEMINI_API_KEY` | Optional fallback reasoning API | Optional |
 
 Where to find them:
 
 - Supabase keys: Dashboard > Project Settings > API
 - Groq key: [Groq Console](https://console.groq.com/keys)
 - OCR.space key: [OCR.space](https://ocr.space/OCRAPI)
+- Google Auth: [Google Cloud Console](https://console.cloud.google.com/) -> APIs & Services -> Credentials
+- Cron Secret: Generate a secure random string (e.g., `openssl rand -hex 32`)
+
+### 3.1. Vercel Cron Configuration
+
+Redressa includes an Autopilot job that polls for approved, unsent messages and dispatches them in the background. Vercel handles this via `vercel.json` and the `/api/cron/auto-dispatch` route.
+
+1. Ensure `CRON_SECRET` is set in Vercel. 
+2. The endpoint will explicitly **fail closed (status 500 or 401)** in production if `CRON_SECRET` is missing.
+3. The cron schedule is already defined in `vercel.json`.
+
+### 3.2. Gmail OAuth Limitations (Test Mode)
+
+If your Google Cloud app is currently in "Testing" mode (not verified):
+- You **must** manually add any tester's email address to the "Test users" list in the Google Cloud OAuth Consent Screen.
+- If a user not on this list attempts to log in or dispatch an email, the Gmail API will silently or explicitly fail with an "Insufficient Permission" or 403 scope error.
+
+### 3.3. Development Cleanup
+A destructive cleanup script is provided for wiping out raw test data (cases, threads, messages) before a hackathon demo or production handover, while explicitly preserving policies and seed data.
+Run locally with: `npm run cleanup:dev -- --confirm`
 
 ## 4. Deploy
 

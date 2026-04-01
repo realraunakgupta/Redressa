@@ -39,8 +39,6 @@ export async function extractDocumentText(options: {
     method: "POST",
     headers: {
       apikey: apiKey,
-      // Note: Node 18+ FormData auto-generates the boundary inside Content-Type,
-      // so we do not explicitly set "Content-Type: multipart/form-data" here.
     },
     body: formData,
   });
@@ -53,12 +51,10 @@ export async function extractDocumentText(options: {
   const data = await response.json();
 
   if (data.IsErroredOnProcessing || data.ErrorMessage) {
-    // OCR.space sometimes returns 200 HTTP but bundles errors cleanly in JSON
     const msgs = Array.isArray(data.ErrorMessage) ? data.ErrorMessage.join(", ") : String(data.ErrorMessage);
     throw new Error(`[OCR.space Content Error]: ${msgs}`);
   }
 
-  // Aggregate text from all parsed results/pages (e.g. for PDFs)
   const parsedResults = data.ParsedResults || [];
   let extractedText = "";
 

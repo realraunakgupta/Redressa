@@ -41,13 +41,19 @@ export async function createCase(data: CaseInsert): Promise<CaseRow> {
   return row as CaseRow;
 }
 
-export async function getCase(id: string): Promise<CaseRow | null> {
+export async function getCase(id: string, userId?: string): Promise<CaseRow | null> {
   const supabase = createServerSupabaseClient();
-  const { data, error } = await supabase
-    .from("cases")
-    .select("*")
-    .eq("id", id)
-    .single();
+  let query = supabase.from("cases").select("*").eq("id", id);
+
+  if (userId) {
+    // If a user is provided, they can see their own cases AND demo cases
+    query = query.or(`user_id.eq.${userId},is_demo.eq.true`);
+  } else {
+    // Anonymous users can ONLY see demo cases
+    query = query.eq("is_demo", true);
+  }
+
+  const { data, error } = await query.single();
 
   if (error && error.code !== "PGRST116") {
     throw new Error(`[Redressa] Failed to get case: ${error.message}`);
@@ -71,6 +77,7 @@ export async function updateCaseStatus(
 export async function listCases(options?: {
   demoOnly?: boolean;
   limit?: number;
+  userId?: string;
 }): Promise<CaseRow[]> {
   const supabase = createServerSupabaseClient();
   let query = supabase
@@ -80,7 +87,14 @@ export async function listCases(options?: {
 
   if (options?.demoOnly) {
     query = query.eq("is_demo", true);
+  } else if (options?.userId) {
+    query = query.eq("user_id", options.userId);
+  } else {
+    // If not specifically asking for demo only, but no userId provided,
+    // default to only showing demo cases to avoid leaking data
+    query = query.eq("is_demo", true);
   }
+
   if (options?.limit) {
     query = query.limit(options.limit);
   }

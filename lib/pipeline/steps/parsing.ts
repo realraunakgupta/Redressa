@@ -28,6 +28,10 @@ export async function stepParsing(caseId: string): Promise<ParsedEvidence[]> {
 
   for (const file of files) {
     let text = file.parsed_text ?? "";
+    // If a previous run cached an error string as parsed_text, discard it so we retry OCR
+    if (text.startsWith("[Error")) {
+      text = "";
+    }
     const isImageFile =
       file.file_type === "image" ||
       file.file_type === "screenshot" ||
@@ -65,21 +69,17 @@ export async function stepParsing(caseId: string): Promise<ParsedEvidence[]> {
           let mimeType = file.mime_type || (isPdfFile ? "application/pdf" : "image/jpeg");
 
           // Compress large images to fit OCR.space free-tier 1024KB limit.
-          // Strategy: grayscale (drops ~60% size without hurting text) then
-          // progressively reduce quality/resolution until under the limit. (700KB max raw before Base64 inflation)
-          const OCR_MAX_BYTES = 700 * 1024; 
+          const OCR_MAX_BYTES = 700 * 1024;
           if (isImageFile && fileBytes.length > OCR_MAX_BYTES) {
             let quality = 85;
             let maxDim = 2000;
 
-            // First pass: grayscale at high quality
             let compressed = await sharp(fileBytes)
               .grayscale()
               .resize({ width: maxDim, height: maxDim, fit: "inside", withoutEnlargement: true })
               .jpeg({ quality })
               .toBuffer();
 
-            // Progressive reduction loop — guaranteed to converge
             while (compressed.length > OCR_MAX_BYTES && quality > 30) {
               quality -= 10;
               maxDim = Math.max(800, maxDim - 300);
@@ -135,7 +135,7 @@ export async function stepParsing(caseId: string): Promise<ParsedEvidence[]> {
     diagnostic.parsed_text_length = text.length;
     diagnostic.parsed_text_preview = text.substring(0, 400).replace(/\n/g, " ");
 
-    if (!file.parsed_text && text) {
+    if (!file.parsed_text && text && !text.startsWith("[Error")) {
       await supabase.from("case_files").update({ parsed_text: text }).eq("id", file.id);
     }
 

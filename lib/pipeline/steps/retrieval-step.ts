@@ -20,11 +20,13 @@ export interface RetrievalStepResult {
 export async function stepRetrieval(
   caseId: string,
   category: ComplaintCategory,
-  complaintText: string
+  complaintText: string,
+  merchantName?: string | null
 ): Promise<RetrievalStepResult> {
   const { policy, regulation } = await retrieveAllRelevant({
     category,
     complaintText,
+    merchantName,
     maxPerType: 5,
   });
 

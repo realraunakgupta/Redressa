@@ -1,5 +1,3 @@
-import type { CasePageData } from "./case-data";
-
 export const MOCK_AVIATION_CASE = {
   caseRow: {
     id: "demo-aviation-id-001",
@@ -75,15 +73,17 @@ export const MOCK_AVIATION_CASE = {
     amount: 8500,
     currency: "INR",
     product_or_service: "Flight ticket (6E-401 DEL-BOM)",
+    dates: [],
     issues: ["last minute flight cancellation", "refund delay violating SLAs"],
     desired_resolution: "Full refund of INR 8500 and DGCA mandated compensation",
     consumer_actions_taken: ["Requested refund at gate", "Multiple follow-ups with customer care"],
     merchant_responses: ["Refund is still processing"],
+    evidence_types_present: ["email", "screenshot"],
   },
   timeline: [
-    { date: "May 15", label: "Arrived at gate. Flight 6E-401 cancelled 2 hours before departure.", source: "Consumer" },
-    { date: "May 15", label: "Requested refund instead of alternative flight.", source: "Consumer" },
-    { date: "June 4", label: "Followed up with customer support. Informed refund is still processing.", source: "Consumer" },
+    { date: "May 15", label: "Arrived at gate. Flight 6E-401 cancelled 2 hours before departure.", source: "complaint" },
+    { date: "May 15", label: "Requested refund instead of alternative flight.", source: "complaint" },
+    { date: "June 4", label: "Followed up with customer support. Informed refund is still processing.", source: "complaint" },
   ],
   evaluation: {
     overall_assessment: "strong",
@@ -98,7 +98,7 @@ export const MOCK_AVIATION_CASE = {
       target_name: "IndiGo Grievance Nodal Officer",
       rationale: "Direct airline escalation to bypass tier-1 support.",
       target: "nodal",
-      contact_info: "nodal@goindigo.in",
+      contact_info: "test-nodal@example.com",
       priority: "high"
     },
     {
@@ -132,6 +132,40 @@ export const MOCK_AVIATION_CASE = {
       relevance_score: 0.98,
     }
   ],
+  threads: [
+    {
+      id: "demo-aviation-thread-001",
+      case_id: "demo-aviation-id-001",
+      user_id: "demo-user",
+      channel: "email",
+      state: "draft",
+      automation_mode: "assisted",
+      escalation_target: "nodal",
+      target_email: "test-nodal@example.com",
+      target_name: "IndiGo Grievance Nodal Officer",
+      gmail_thread_id: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+  ],
+  messages: [
+    {
+      id: "demo-aviation-msg-001",
+      thread_id: "demo-aviation-thread-001",
+      case_id: "demo-aviation-id-001",
+      user_id: "demo-user",
+      subject: "Urgent: Failure to Refund for Last-Minute Cancellation - PNR-WXY789",
+      body: "Dear Nodal Officer, IndiGo,\n\nI am writing to formally escalate the failure of IndiGo to refund INR 8500 for my cancelled flight 6E-401 from Delhi to Mumbai, originally scheduled for May 15. The flight was cancelled less than 2 hours before departure while I was waiting at the boarding gate.\n\nUnder the DGCA CAR Section 3 Series M Part IV, as well as IndiGo's own Conditions of Carriage, I am entitled to a full refund within 15 days if a flight is cancelled and the passenger opts not to travel on a re-booked flight. Over 20 days have passed, and despite multiple calls to your customer service team, the refund is \"still processing.\"\n\nI request an immediate transfer of INR 8500 to my original payment source, along with the specified inconvenience compensation mandated by DGCA for last-minute cancellations without 24-hour notice.\n\nI expect a resolution within 48 hours to avoid escalation to the AirSewa grievance portal.\n\nRegards,\n[Your Name]",
+      from_address: "consumer@example.com",
+      to_address: "test-nodal@example.com",
+      status: "draft",
+      generation_source: "pipeline",
+      gmail_message_id: null,
+      created_at: new Date().toISOString()
+    }
+  ],
+  inboundMessages: [],
+  hasGmail: false,
 };
 
 export const MOCK_ECOMMERCE_CASE = {
@@ -209,15 +243,17 @@ export const MOCK_ECOMMERCE_CASE = {
     amount: 54000.0,
     currency: "INR",
     product_or_service: "Laptop",
+    dates: [],
     issues: ["damaged goods received", "unjustified return rejection"],
     desired_resolution: "Full refund or replacement immediately",
     consumer_actions_taken: ["Raised return request", "Uploaded unboxing video"],
     merchant_responses: ["Rejected claim (blamed post-delivery damage)"],
+    evidence_types_present: ["video", "screenshot"],
   },
   timeline: [
-    { date: "Delivery Date", label: "Received package. Unboxed to find shattered screen.", source: "Consumer" },
-    { date: "Delivery Date", label: "Raised return request instantly.", source: "Consumer" },
-    { date: "Yesterday", label: "Seller rejected return falsely claiming post-delivery damage.", source: "Flipkart" },
+    { date: "Delivery Date", label: "Received package. Unboxed to find shattered screen.", source: "complaint" },
+    { date: "Delivery Date", label: "Raised return request instantly.", source: "complaint" },
+    { date: "Yesterday", label: "Seller rejected return falsely claiming post-delivery damage.", source: "evidence" },
   ],
   evaluation: {
     overall_assessment: "strong",
@@ -232,7 +268,7 @@ export const MOCK_ECOMMERCE_CASE = {
       target_name: "Flipkart Grievance Officer",
       rationale: "Escalate past the tier-1 chat support directly to the nodal officer.",
       target: "nodal",
-      contact_info: "grievance.officer@flipkart.com",
+      contact_info: "test-grievance.officer@example.com",
       priority: "high"
     },
     {
@@ -266,4 +302,38 @@ export const MOCK_ECOMMERCE_CASE = {
       relevance_score: 0.99,
     }
   ],
+  threads: [
+    {
+      id: "demo-ecommerce-thread-001",
+      case_id: "demo-ecommerce-id-001",
+      user_id: "demo-user",
+      channel: "email",
+      state: "draft",
+      automation_mode: "autopilot",
+      escalation_target: "nodal",
+      target_email: "test-grievance.officer@example.com",
+      target_name: "Flipkart Grievance Officer",
+      gmail_thread_id: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+  ],
+  messages: [
+    {
+      id: "demo-ecommerce-msg-001",
+      thread_id: "demo-ecommerce-thread-001",
+      case_id: "demo-ecommerce-id-001",
+      user_id: "demo-user",
+      subject: "Urgent: Unjustified Return Rejection for Shattered Laptop - OD1122334455",
+      body: "Dear Grievance Officer, Flipkart,\n\nI received my order (OD1122334455) for a laptop three days ago. Upon unboxing, the display was completely shattered. Despite immediately uploading an unboxing video as irrefutable proof of DOA (Dead on Arrival) state, the seller rejected my return claim within the 7-day window citing \"post-delivery damage.\"\n\nUnder the Consumer Protection (E-Commerce) Rules, 2020, specifically Section 5(2), an e-commerce entity is obligated to ensure goods match their description and are defect-free. An unboxing video legally establishes the defect was present at the point of delivery.\n\nI request an immediate reversal of the seller's rejection and an automated pickup of the damaged unit followed by a full refund or replacement. If unresolved within 48 hours, I will formally escalate this to the National Consumer Helpline (NCH).\n\nRegards,\n[Your Name]",
+      from_address: "consumer@example.com",
+      to_address: "test-grievance.officer@example.com",
+      status: "draft",
+      generation_source: "pipeline",
+      gmail_message_id: null,
+      created_at: new Date().toISOString()
+    }
+  ],
+  inboundMessages: [],
+  hasGmail: false,
 };

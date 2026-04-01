@@ -26,27 +26,29 @@ export function AgentActivityPanel({ events }: { events: CaseEventRow[] }) {
   if (events.length === 0) {
     return (
       <PanelShell title="Agent Activity">
-        <p className="text-sm text-neutral-600">No activity yet.</p>
+        <p className="text-sm font-sans text-on-surface-muted italic">No activity yet.</p>
       </PanelShell>
     );
   }
 
   return (
     <PanelShell title="Agent Activity">
-      <div className="space-y-3">
+      <div className="space-y-5">
         {events.map((event) => {
           const config = EVENT_LABELS[event.event_type] ?? { label: event.event_type, icon: "--" };
           return (
-            <div key={event.id} className="flex gap-3">
-              <span className="mt-0.5 shrink-0 text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
+            <div key={event.id} className="flex gap-4 items-start">
+              <span className="mt-0.5 shrink-0 bg-base border border-[var(--color-border-solid)] rounded-sm px-1.5 pl-2 py-0.5 text-[9px] font-sans font-bold uppercase tracking-widest text-on-surface-muted/80">
                 {config.icon}
               </span>
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-neutral-200">{event.title}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-sans text-on-base leading-snug">{event.title}</p>
                 {event.detail && (
-                  <p className="mt-0.5 break-words text-xs text-neutral-500">{event.detail}</p>
+                  <p className="mt-1 break-words text-xs font-sans text-on-surface-muted/80 leading-relaxed max-w-[95%]">
+                    {event.detail}
+                  </p>
                 )}
-                <p className="mt-0.5 text-xs text-neutral-600">
+                <p className="mt-1.5 text-[10px] font-sans font-bold uppercase tracking-wider text-on-surface-muted/50">
                   {new Date(event.created_at).toLocaleTimeString("en-IN", {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -65,8 +67,8 @@ export function AgentActivityPanel({ events }: { events: CaseEventRow[] }) {
 
 function PanelShell({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-5">
-      <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-neutral-400">
+    <div className="rounded-sm border border-[var(--color-border-solid)] bg-surface-low p-6 sm:p-8 shadow-sm">
+      <h2 className="mb-6 border-b border-[var(--color-border-ghost)] pb-4 text-xs font-serif font-bold uppercase tracking-widest text-primary">
         {title}
       </h2>
       {children}

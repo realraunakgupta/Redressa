@@ -1,6 +1,6 @@
-# Redressa AI
+# Redressa
 
-> Agentic consumer redressal workflow that turns messy complaint evidence into grounded, escalation-ready claim packages.
+> Workflow that turns messy complaint evidence into grounded, escalation-ready claim packages.
 
 **Hackathon**: Protex Hack-2-Win 2026  
 **Track**: Track 2 - Agentic AI / AI Workflows
@@ -12,7 +12,7 @@
 | Frontend / App | Next.js 16 App Router + TypeScript + Tailwind v4 |
 | Backend | Server-side logic inside Next.js route handlers and server components |
 | Database + Storage | Supabase (PostgreSQL + Storage) |
-| AI Reasoning | Groq API via provider adapter (`llama-3.3-70b-versatile`) |
+| AI Reasoning | Groq API (`llama-3.3-70b-versatile`) |
 | OCR / Document Extraction | OCR.space |
 | Deployment | Vercel |
 
@@ -20,8 +20,15 @@
 
 - The live pipeline uses Groq as the primary reasoning provider.
 - OCR.space is used only for uploaded image OCR and best-effort PDF extraction.
+- **Support Breadth:** The platform applies a *Hybrid Grounding Model*.
+  - **Merchant-grounded support:** IndiGo and Flipkart are part of the stable baseline. Myntra support is available when the local policy corpus has been ingested for it.
+  - **Generic fallback:** For unsupported or unknown merchants, the pipeline ignores mismatched company policies and relies on ingested regulations (for example DGCA rules and the E-Commerce Rules 2020) plus generic escalation guidance.
 - The hidden sample-case path remains available as the safest fallback demo path.
 - The app is a guidance workflow, not legal advice.
+
+### Retrieval Evolution Note
+Currently, the pipeline isolates policy grounding through deterministic keyword matching and simple merchant-name normalization/substring matching.
+**Future Roadmap:** In future versions, policy retrieval should migrate from keyword filtering to deep semantic embeddings stored in PostgreSQL using `pgvector`. A vector-based retriever would intelligently match conceptually identical grievances (e.g. "it arrived shattered" matching a "Defective Returns" policy chunk) without requiring hardcoded keyword maps, dramatically improving retrieval accuracy on generalized merchant policies.
 
 ## Getting Started
 
@@ -116,7 +123,6 @@ Quick version:
 
 - The default experience is consumer-facing and does not prominently expose demo shortcuts.
 - Hidden sample cases are still available from the subtle "or use a sample case" section on the new-claim page.
-- The debug panel is hidden behind `?debug=1` on case pages.
 
 ## Limitations
 
@@ -127,7 +133,6 @@ Quick version:
 
 ## Documentation
 
-- [PROJECT_STATE.md](PROJECT_STATE.md) - current build state and scope truth
 - [DEPLOYMENT.md](DEPLOYMENT.md) - deployment guide
 - [DEMO_CHECKLIST.md](DEMO_CHECKLIST.md) - live and fallback demo flow
 - [VALIDATION.md](VALIDATION.md) - problem validation and track fit

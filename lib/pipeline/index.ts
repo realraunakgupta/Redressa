@@ -16,8 +16,8 @@
  * 9. Escalation route recommendation
  * 10. Output generation (provider adapter)
  */
-
-import { getCase, updateCaseStatus, addCaseEvent } from "@/lib/supabase/helpers";
+import { updateCaseStatus, addCaseEvent } from "@/lib/supabase/helpers";
+import { createServerSupabaseClient } from "@/lib/supabase/client";
 import { stepIntake, type IntakeInput } from "./steps/intake";
 import { stepParsing } from "./steps/parsing";
 import { stepExtraction } from "./steps/extraction";
@@ -26,7 +26,7 @@ import { stepClassification } from "./steps/classification";
 import { stepRetrieval } from "./steps/retrieval-step";
 import { stepEvaluation } from "./steps/evaluation";
 import { stepRouteSelection } from "./steps/route-selection";
-import { stepOutputGeneration } from "./steps/output-generation";
+import { stepOutputGeneration, type ConsumerProfile } from "./steps/output-generation";
 
 export type PipelineStep =
   | "intake"
@@ -74,9 +74,15 @@ export async function runPipelineFromIntake(input: IntakeInput): Promise<string>
  */
 export async function runPipelineForCase(caseId: string): Promise<void> {
   try {
-    const caseRow = await getCase(caseId);
-    if (!caseRow) {
-      throw new Error(`Case ${caseId} not found`);
+    const supabase = createServerSupabaseClient();
+    const { data: caseRow, error: fetchError } = await supabase
+      .from("cases")
+      .select("*")
+      .eq("id", caseId)
+      .single();
+
+    if (fetchError || !caseRow) {
+      throw new Error(`Case ${caseId} not found or access denied inside pipeline.`);
     }
 
     // Step 2: Parse evidence
@@ -95,11 +101,12 @@ export async function runPipelineForCase(caseId: string): Promise<void> {
       caseRow.category as "aviation" | "ecommerce" | null
     );
 
-    // Steps 6 & 7: Retrieve policies and regulations
+    // Step 7: Retrieve relevant policies and regulations
     const retrieval = await stepRetrieval(
       caseId,
       classification.category,
-      caseRow.description
+      facts.complaint_summary,
+      facts.merchant_name || null
     );
 
     // Step 8: Grounded evaluation (provider adapter)
@@ -109,17 +116,25 @@ export async function runPipelineForCase(caseId: string): Promise<void> {
     const routes = await stepRouteSelection(
       caseId,
       classification.category,
-      evaluation
+      evaluation,
+      facts
     );
 
     // Step 10: Output generation (provider adapter)
+    const consumerProfile: ConsumerProfile = {
+      name: caseRow.consumer_name ?? null,
+      email: caseRow.consumer_email ?? null,
+      phone: caseRow.consumer_phone ?? null,
+    };
     await stepOutputGeneration(
       caseId,
       facts,
       timeline,
       evaluation,
       routes,
-      retrieval
+      retrieval,
+      caseRow.user_id,
+      consumerProfile
     );
 
     // Status is set to "complete" inside stepOutputGeneration

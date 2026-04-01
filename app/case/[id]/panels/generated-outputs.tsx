@@ -28,7 +28,7 @@ export function GeneratedOutputsPanel({ outputs }: { outputs: GeneratedOutputRow
   if (displayOutputs.length === 0) {
     return (
       <PanelShell title="Generated Outputs">
-        <p className="text-sm text-neutral-600">Outputs will appear after pipeline completion.</p>
+        <p className="text-sm font-sans text-on-surface-muted italic">Outputs will appear after pipeline completion.</p>
       </PanelShell>
     );
   }
@@ -37,7 +37,7 @@ export function GeneratedOutputsPanel({ outputs }: { outputs: GeneratedOutputRow
 
   return (
     <PanelShell title="Generated Outputs">
-      <div className="mb-4 flex flex-wrap gap-1.5">
+      <div className="mb-6 flex flex-wrap gap-2">
         {displayOutputs.map((output) => {
           const config = OUTPUT_CONFIG[output.output_type] ?? {
             label: output.output_type,
@@ -47,10 +47,10 @@ export function GeneratedOutputsPanel({ outputs }: { outputs: GeneratedOutputRow
             <button
               key={output.output_type}
               onClick={() => setActiveTab(output.output_type)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`rounded-sm px-4 py-2 text-[10px] font-sans font-bold uppercase tracking-widest transition-colors border ${
                 activeTab === output.output_type
-                  ? "bg-primary-600/20 text-primary-300"
-                  : "bg-neutral-800/50 text-neutral-400 hover:text-neutral-300"
+                  ? "bg-surface text-primary border-[var(--color-border-solid)]"
+                  : "bg-base text-on-surface-muted border-[var(--color-border-ghost)] hover:border-[var(--color-border-solid)]"
               }`}
             >
               {config.icon} {config.label}
@@ -60,9 +60,9 @@ export function GeneratedOutputsPanel({ outputs }: { outputs: GeneratedOutputRow
       </div>
 
       {activeOutput && (
-        <div className="rounded-lg border border-neutral-800/50 bg-neutral-950/50 p-4">
+        <div className="rounded-sm border border-[var(--color-border-ghost)] bg-base p-6 shadow-inner">
           <div className="max-w-none">
-            <div className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-neutral-200">
+            <div className="whitespace-pre-wrap font-serif text-sm leading-loose text-on-surface-muted">
               {renderFormattedText(activeOutput.content)}
             </div>
           </div>
@@ -86,7 +86,7 @@ function renderFormattedText(content: string) {
             return (
               <strong
                 key={`segment-${lineIndex}-${segmentIndex}`}
-                className="font-semibold text-white"
+                className="font-bold text-on-base font-sans"
               >
                 {boldMatch[1]}
               </strong>
@@ -106,8 +106,8 @@ function renderFormattedText(content: string) {
 
 function PanelShell({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-5">
-      <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-neutral-400">
+    <div className="rounded-sm border border-[var(--color-border-solid)] bg-surface-low p-6 sm:p-8 shadow-sm">
+      <h2 className="mb-6 border-b border-[var(--color-border-ghost)] pb-4 text-xs font-serif font-bold uppercase tracking-widest text-primary">
         {title}
       </h2>
       {children}

@@ -86,3 +86,25 @@ export function isSupabaseConfigured(): boolean {
 export function isGroqConfigured(): boolean {
   return !!process.env.GROQ_API_KEY;
 }
+
+/**
+ * Check if OCR.space is configured for full document parsing.
+ */
+export function isOcrSpaceConfigured(): boolean {
+  return !!process.env.OCR_SPACE_API_KEY;
+}
+
+/**
+ * Check if Google Auth & Gmail API are configured for escalated communications.
+ */
+export function isGoogleAuthConfigured(): boolean {
+  return !!(process.env.AUTH_GOOGLE_ID || process.env.GOOGLE_CLIENT_ID) && 
+         !!(process.env.AUTH_GOOGLE_SECRET || process.env.GOOGLE_CLIENT_SECRET);
+}
+
+/**
+ * Check if Gemini is intentionally retained as a backend fallback.
+ */
+export function isGeminiConfigured(): boolean {
+  return !!(process.env.GEMINI_API_KEY || process.env.GOOGLE_GEMINI_API_KEY);
+}

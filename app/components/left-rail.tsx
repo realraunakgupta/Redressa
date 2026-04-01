@@ -1,4 +1,78 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { createSupabaseBrowserAuthClient } from "@/lib/supabase/auth";
+import type { User } from "@supabase/supabase-js";
+
+function UserFooter() {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const supabase = createSupabaseBrowserAuthClient();
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+  }, []);
+
+  async function handleSignOut() {
+    const supabase = createSupabaseBrowserAuthClient();
+    await supabase.auth.signOut();
+    window.location.href = "/login";
+  }
+
+  if (!user) return null;
+
+  const initials =
+    (user.user_metadata?.full_name as string | undefined)
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() ||
+    user.email?.[0].toUpperCase() ||
+    "U";
+
+  const displayName =
+    (user.user_metadata?.full_name as string | undefined) ||
+    user.email?.split("@")[0] ||
+    "User";
+
+  return (
+    <div className="border-t border-neutral-800 pt-4 px-2">
+      <div className="flex items-center gap-2.5">
+        {user.user_metadata?.avatar_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={user.user_metadata.avatar_url as string}
+            alt={displayName}
+            className="h-7 w-7 rounded-full object-cover border border-neutral-700"
+          />
+        ) : (
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-600 text-xs font-bold text-white">
+            {initials}
+          </div>
+        )}
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-xs font-medium text-neutral-300">{displayName}</p>
+          <p className="truncate text-xs text-neutral-600">{user.email}</p>
+        </div>
+        <button
+          onClick={handleSignOut}
+          title="Sign out"
+          className="shrink-0 rounded p-1 text-neutral-600 hover:text-neutral-400 hover:bg-neutral-800 transition-colors"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export function LeftRail({ activePath }: { activePath: "new" | "case" | "workspace" }) {
   const isCase = activePath === "case";
@@ -97,13 +171,8 @@ export function LeftRail({ activePath }: { activePath: "new" | "case" | "workspa
           </div>
         </div>
       </div>
-      
-      <div className="border-t border-neutral-800 pt-4 px-2">
-         <div className="flex items-center gap-3 text-sm font-medium text-neutral-400">
-            <div className="w-6 h-6 rounded bg-primary-600 flex items-center justify-center text-white text-xs font-bold">A</div>
-            <span>Analyst Console</span>
-         </div>
-      </div>
+
+      <UserFooter />
     </aside>
   );
 }

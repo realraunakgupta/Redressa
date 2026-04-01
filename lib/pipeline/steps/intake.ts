@@ -15,6 +15,10 @@ export interface IntakeInput {
   order_reference?: string | null;
   amount?: number | null;
   is_demo?: boolean;
+  user_id?: string | null;
+  consumer_name?: string | null;
+  consumer_email?: string | null;
+  consumer_phone?: string | null;
   files?: { name: string; type: string; size: number; storage_path: string }[];
 }
 
@@ -26,6 +30,10 @@ export async function stepIntake(input: IntakeInput): Promise<CaseRow> {
     order_reference: input.order_reference ?? null,
     amount: input.amount ?? null,
     is_demo: input.is_demo ?? false,
+    user_id: input.user_id ?? null,
+    consumer_name: input.consumer_name ?? null,
+    consumer_email: input.consumer_email ?? null,
+    consumer_phone: input.consumer_phone ?? null,
     status: "intake",
   };
 

@@ -21,6 +21,8 @@ import type { Citation, EscalationRoute } from "@/lib/types";
 import type { ExtractedFacts } from "@/lib/pipeline/steps/extraction";
 import type { TimelineEntry } from "@/lib/pipeline/steps/timeline";
 import type { EvaluationResult } from "@/lib/pipeline/steps/evaluation";
+import { getOAuthAccount, getThreadsForCase, getMessagesForThread, getInboundMessages } from "@/lib/supabase/helpers-communication";
+import type { CommunicationThreadRow, OutboundMessageRow, InboundMessageRow } from "@/lib/supabase/types";
 
 // ---- Types ----
 
@@ -37,20 +39,38 @@ export interface CasePageData {
   routes: EscalationRoute[] | null;
   policyCitations: Citation[] | null;
   regulationCitations: Citation[] | null;
+  threads: CommunicationThreadRow[];
+  messages: OutboundMessageRow[];
+  inboundMessages: InboundMessageRow[];
+  hasGmail: boolean;
 }
 
 // ---- Loader ----
 
-export async function loadCasePageData(caseId: string): Promise<CasePageData | null> {
-  const caseRow = await getCase(caseId);
+export async function loadCasePageData(caseId: string, userId?: string): Promise<CasePageData | null> {
+  const caseRow = await getCase(caseId, userId);
   if (!caseRow) return null;
 
   // Fetch all events and outputs in parallel
-  const [events, outputs, files] = await Promise.all([
+  const [events, outputs, files, threads] = await Promise.all([
     getCaseEvents(caseId),
     getCaseOutputs(caseId),
     getCaseFiles(caseId),
+    getThreadsForCase(caseId),
   ]);
+
+  let messages: OutboundMessageRow[] = [];
+  let inboundMessages: InboundMessageRow[] = [];
+  if (threads.length > 0) {
+     messages = await getMessagesForThread(threads[0].id);
+     inboundMessages = await getInboundMessages(threads[0].id);
+  }
+
+  let hasGmail = false;
+  if (userId) {
+     const oauth = await getOAuthAccount(userId);
+     hasGmail = !!oauth?.access_token;
+  }
 
   // Extract intermediate artifacts from event metadata
   const [
@@ -87,5 +107,9 @@ export async function loadCasePageData(caseId: string): Promise<CasePageData | n
     routes: (meta(routeEvent).routes as EscalationRoute[]) ?? null,
     policyCitations: (meta(policyEvent).citations as Citation[]) ?? null,
     regulationCitations: (meta(regulationEvent).citations as Citation[]) ?? null,
+    threads,
+    messages,
+    inboundMessages,
+    hasGmail,
   };
 }

@@ -22,11 +22,19 @@ import type { ExtractedFacts } from "./extraction";
 import type { EvaluationResult } from "./evaluation";
 import type { RetrievalStepResult } from "./retrieval-step";
 import type { TimelineEntry } from "./timeline";
+import { createThread, createOutboundMessage } from "@/lib/supabase/helpers-communication";
+
+export interface ConsumerProfile {
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+}
 
 const BASE_INSTRUCTION = `You are a consumer redressal assistant for Indian consumers.
 Write professional, clear, and actionable content.
 Reference specific policy sections and regulations where applicable.
-Do not invent facts not present in the provided context.`;
+Do not invent facts not present in the provided context.
+CRITICAL MANDATE: Keep all emails and notes strictly concise, firm, and brief. Drop all conversational fluff, repetitive pleasantries, and unnecessary re-explanations. Keep paragraphs very short.`;
 
 export async function stepOutputGeneration(
   caseId: string,
@@ -34,7 +42,9 @@ export async function stepOutputGeneration(
   timeline: TimelineEntry[],
   evaluation: EvaluationResult,
   routes: EscalationRoute[],
-  retrieval: RetrievalStepResult
+  retrieval: RetrievalStepResult,
+  userId?: string | null,
+  consumerProfile?: ConsumerProfile | null
 ): Promise<void> {
   const allCitations: Citation[] = [
     ...retrieval.policy.citations,
@@ -57,7 +67,7 @@ export async function stepOutputGeneration(
     citations: citationsJson,
   });
 
-  const grievanceEmail = await generateGrievanceEmail(facts, evaluation, routes);
+  const grievanceEmail = await generateGrievanceEmail(facts, evaluation, routes, consumerProfile ?? null);
   await addGeneratedOutput({
     case_id: caseId,
     output_type: "grievance_email",
@@ -65,6 +75,32 @@ export async function stepOutputGeneration(
     content: grievanceEmail,
     citations: citationsJson,
   });
+
+  // Automatically queue the draft thread & message if a real user owns the case
+  if (userId && routes.length > 0) {
+     const targetRoute = routes[0];
+     try {
+        const thread = await createThread({
+            case_id: caseId,
+            user_id: userId,
+            escalation_target: targetRoute.target,
+            target_email: targetRoute.contact_info || "unknown@example.com",
+            target_name: targetRoute.target_name
+        });
+
+        await createOutboundMessage({
+            thread_id: thread.id,
+            case_id: caseId,
+            user_id: userId,
+            subject: `Grievance Escalation: ${facts.complaint_summary.substring(0, 50)}...`,
+            body: grievanceEmail,
+            from_address: "consumer", // to be replaced dynamically when sending via OAuth
+            to_address: targetRoute.contact_info || "unknown@example.com"
+        });
+     } catch (err) {
+        console.error("[Redressa] Error generating draft thread for case:", caseId, err);
+     }
+  }
 
   const escalationNote = await generateEscalationNote(evaluation, routes);
   await addGeneratedOutput({
@@ -140,7 +176,8 @@ Use a professional tone suitable for a formal complaint.`;
 async function generateGrievanceEmail(
   facts: ExtractedFacts,
   evaluation: EvaluationResult,
-  routes: EscalationRoute[]
+  routes: EscalationRoute[],
+  consumer: ConsumerProfile | null
 ): Promise<string> {
   const firstRoute = routes[0];
   const prompt = `Write a formal grievance email for this consumer complaint.
@@ -166,11 +203,30 @@ Write a formal email with:
 - Timeline of events and actions taken
 - Specific resolution requested
 - Reference to consumer rights and escalation if unresolved
-- Professional closing
+- End the body text with "Yours sincerely," on its own line, then stop. Do NOT write a name or contact details below it — those will be added separately.
 
 The tone should be firm but polite. Reference specific policies and regulations.`;
 
-  return generateText({ prompt, systemInstruction: BASE_INSTRUCTION });
+  const bodyText = await generateText({ prompt, systemInstruction: BASE_INSTRUCTION });
+
+  // Deterministically append the consumer signature block regardless of what the model produces.
+  // Strip any trailing placeholder lines the model may have generated before our block.
+  const trimmed = bodyText
+    .replace(/\n*(yours sincerely|sincerely|regards|warm regards|faithfully)[^\n]*/gi, "\nYours sincerely,")
+    .replace(/\n*\[Your Name\][^\n]*/gi, "")
+    .replace(/\n*\[Your Contact[^\]]*\][^\n]*/gi, "")
+    .trimEnd();
+
+  const signatureLines: string[] = [];
+  if (consumer?.name)  signatureLines.push(consumer.name);
+  if (consumer?.email) signatureLines.push(consumer.email);
+  if (consumer?.phone) signatureLines.push(consumer.phone);
+
+  const signatureBlock = signatureLines.length > 0
+    ? `\n${signatureLines.join("\n")}`
+    : "";
+
+  return `${trimmed}${signatureBlock}`;
 }
 
 async function generateEscalationNote(
@@ -343,7 +399,7 @@ ${internalPack.escalationPath.join("\n")}
 ${internalPack.recommendedSteps.map((action) => `- ${action}`).join("\n")}
 
 ---
-*** DRAFT PREVIEW ONLY - Not for final legal filing. Generated by Redressa AI. ***`;
+*** DRAFT PREVIEW ONLY - Not for final legal filing. Generated by Redressa. ***`;
 }
 
 function deriveEvidenceGapLines(

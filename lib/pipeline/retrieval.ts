@@ -95,10 +95,11 @@ export function extractSearchKeywords(text: string): string[] {
 export async function retrievePolicyChunks(options: {
   category: "aviation" | "ecommerce";
   complaintText: string;
+  merchantName?: string | null;
   maxResults?: number;
   sourceType?: "company_policy" | "regulation";
 }): Promise<RetrievalResult> {
-  const { category, complaintText, maxResults = 10, sourceType } = options;
+  const { category, complaintText, merchantName, maxResults = 10, sourceType } = options;
   const searchKeywords = extractSearchKeywords(complaintText);
 
   if (searchKeywords.length === 0) {
@@ -137,6 +138,22 @@ export async function retrievePolicyChunks(options: {
 
     // Filter by source_type if specified
     if (sourceType && row.document?.source_type !== sourceType) continue;
+
+    // Strict merchant isolation for company policies
+    if (row.document?.source_type === "company_policy") {
+       if (!merchantName) {
+           // If we don't know the merchant, we cannot safely use ANY company policy.
+           continue; 
+       }
+       const docComp = (row.document.company_name || "").toLowerCase().trim();
+       const caseComp = merchantName.toLowerCase().trim();
+       if (!docComp || !caseComp) continue;
+       
+       // Allow matching if either string contains the other (e.g. "Indigo" in "Indigo Airlines")
+       if (!docComp.includes(caseComp) && !caseComp.includes(docComp)) {
+           continue; // Mismatch, discard
+       }
+    }
 
     scored.push({
       document_id: row.document?.id ?? row.document_id,
@@ -180,20 +197,23 @@ export async function retrievePolicyChunks(options: {
 export async function retrieveAllRelevant(options: {
   category: "aviation" | "ecommerce";
   complaintText: string;
+  merchantName?: string | null;
   maxPerType?: number;
 }): Promise<{ policy: RetrievalResult; regulation: RetrievalResult }> {
-  const { category, complaintText, maxPerType = 5 } = options;
+  const { category, complaintText, merchantName, maxPerType = 5 } = options;
 
   const [policy, regulation] = await Promise.all([
     retrievePolicyChunks({
       category,
       complaintText,
+      merchantName,
       maxResults: maxPerType,
       sourceType: "company_policy",
     }),
     retrievePolicyChunks({
       category,
       complaintText,
+      merchantName,
       maxResults: maxPerType,
       sourceType: "regulation",
     }),

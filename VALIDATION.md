@@ -1,4 +1,4 @@
-# VALIDATION - Redressa AI
+# VALIDATION - Redressa
 
 > Short validation notes for hackathon pitching and PPT use.
 
@@ -18,9 +18,9 @@
 
 Track 2 asks for: **autonomous agents capable of multi-step reasoning and real-world task execution.**
 
-Redressa AI is exactly this:
+Redressa is exactly this:
 
-| Track 2 Requirement | How Redressa AI Delivers |
+| Track 2 Requirement | How Redressa Delivers |
 |----------------------|--------------------------|
 | Multi-step reasoning | 9-step typed pipeline: intake -> parse -> extract -> timeline -> classify -> retrieve policy -> evaluate -> route -> generate |
 | Autonomous agent behavior | Each step runs as a visible agent action with structured outputs - no manual intervention between steps |
@@ -69,4 +69,4 @@ Starting narrow with two strong categories is better than starting broad with te
 
 ## Summary for Pitching
 
-> *"Every year, lakhs of Indian consumers give up on valid complaints because they can't navigate the escalation maze. Redressa AI is an agentic workflow that takes their messy evidence - screenshots, invoices, chat logs - and produces a grounded, policy-cited, escalation-ready claim package in minutes. It's not a chatbot. It's a consumer redressal agent that actually does the work."*
+> *"Every year, lakhs of Indian consumers give up on valid complaints because they can't navigate the escalation maze. Redressa is an agentic workflow that takes their messy evidence - screenshots, invoices, chat logs - and produces a grounded, policy-cited, escalation-ready claim package in minutes. It's not a chatbot. It's a consumer redressal agent that actually does the work."*

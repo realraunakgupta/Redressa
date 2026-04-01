@@ -11,7 +11,7 @@ export function CitationsPanel({ citations }: { citations: Citation[] }) {
   if (citations.length === 0) {
     return (
       <PanelShell title="Citations">
-        <p className="text-sm text-neutral-600">
+        <p className="text-sm font-sans text-on-surface-muted italic">
           Citations will appear after policy retrieval.
         </p>
       </PanelShell>
@@ -24,9 +24,9 @@ export function CitationsPanel({ citations }: { citations: Citation[] }) {
   return (
     <PanelShell title="Citations">
       {policies.length > 0 && (
-        <div className="mb-4">
-          <h3 className="text-xs font-medium uppercase text-neutral-500">Company Policies</h3>
-          <div className="mt-2 space-y-3">
+        <div className="mb-6">
+          <h3 className="text-[0.65rem] font-sans font-bold uppercase tracking-widest text-on-surface-muted opacity-80 mb-3">Company Policies</h3>
+          <div className="mt-3 space-y-4">
             {policies.map((c, i) => (
               <CitationItem key={`p-${i}`} citation={c} />
             ))}
@@ -35,9 +35,9 @@ export function CitationsPanel({ citations }: { citations: Citation[] }) {
       )}
 
       {regulations.length > 0 && (
-        <div>
-          <h3 className="text-xs font-medium uppercase text-neutral-500">Regulations</h3>
-          <div className="mt-2 space-y-3">
+        <div className="mb-2">
+          <h3 className="text-[0.65rem] font-sans font-bold uppercase tracking-widest text-on-surface-muted opacity-80 mb-3">Regulations</h3>
+          <div className="mt-3 space-y-4">
             {regulations.map((c, i) => (
               <CitationItem key={`r-${i}`} citation={c} />
             ))}
@@ -52,24 +52,24 @@ function CitationItem({ citation }: { citation: Citation }) {
   const isPolicy = citation.source_type === "policy";
 
   return (
-    <div className="rounded-lg border border-neutral-800/50 bg-neutral-950/50 p-4">
+    <div className="rounded-sm border border-[var(--color-border-ghost)] bg-base p-5 transition-colors hover:border-[var(--color-border-solid)]">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold text-neutral-200">{citation.section_label}</p>
-          <p className="mt-0.5 text-xs text-neutral-500">{citation.source_title}</p>
+          <p className="text-sm font-sans font-bold text-on-base">{citation.section_label}</p>
+          <p className="mt-1 text-xs font-sans font-medium uppercase tracking-wider text-on-surface-muted/80">{citation.source_title}</p>
         </div>
         <span
-          className={`shrink-0 rounded px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${
+          className={`shrink-0 rounded-sm px-2 py-1 text-[9px] font-sans font-bold uppercase tracking-widest border ${
             isPolicy
-              ? "bg-primary-950/50 text-primary-400 border border-primary-900/50"
-              : "bg-accent-950/50 text-accent-400 border border-accent-900/50"
+              ? "bg-surface text-primary border-[var(--color-border-solid)]"
+              : "bg-surface-low text-on-surface-muted border-[var(--color-border-ghost)]"
           }`}
         >
           {citation.source_type}
         </span>
       </div>
-      <blockquote className="mt-3 border-l-2 border-neutral-700/50 pl-3">
-        <p className="text-xs italic leading-relaxed text-neutral-400 line-clamp-4">
+      <blockquote className="mt-4 border-l-[1.5px] border-primary/30 pl-4">
+        <p className="text-sm font-serif italic text-on-surface-muted leading-relaxed line-clamp-4">
           &quot;{citation.excerpt}&quot;
         </p>
       </blockquote>
@@ -79,8 +79,8 @@ function CitationItem({ citation }: { citation: Citation }) {
 
 function PanelShell({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-5">
-      <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-neutral-400">
+    <div className="rounded-sm border border-[var(--color-border-solid)] bg-surface-low p-6 sm:p-8 shadow-sm">
+      <h2 className="mb-6 border-b border-[var(--color-border-ghost)] pb-4 text-xs font-serif font-bold uppercase tracking-widest text-primary">
         {title}
       </h2>
       {children}

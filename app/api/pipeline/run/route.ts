@@ -1,7 +1,7 @@
 /**
  * POST /api/pipeline/run
  *
- * Triggers the full Redressa AI pipeline for a new complaint.
+ * Triggers the full Redressa pipeline for a new complaint.
  *
  * Body:
  * {
@@ -18,6 +18,8 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { createSupabaseServerAuthClient } from "@/lib/supabase/auth";
 import { runPipelineFromIntake } from "@/lib/pipeline";
 
 export const maxDuration = 60;
@@ -31,6 +33,9 @@ interface RunPipelineBody {
   order_reference: string | null;
   amount: number | null;
   is_demo: boolean;
+  consumer_name: string | null;
+  consumer_email: string | null;
+  consumer_phone: string | null;
   files: { name: string; type: string; size: number; storage_path: string }[];
 }
 
@@ -110,6 +115,10 @@ function validateRunPipelineBody(body: unknown):
     }
   }
 
+  const consumer_name = typeof payload.consumer_name === "string" ? payload.consumer_name : null;
+  const consumer_email = typeof payload.consumer_email === "string" ? payload.consumer_email : null;
+  const consumer_phone = typeof payload.consumer_phone === "string" ? payload.consumer_phone : null;
+
   return {
     success: true,
     data: {
@@ -119,6 +128,9 @@ function validateRunPipelineBody(body: unknown):
       order_reference: orderReference,
       amount,
       is_demo: isDemo,
+      consumer_name,
+      consumer_email,
+      consumer_phone,
       files,
     },
   };
@@ -126,6 +138,14 @@ function validateRunPipelineBody(body: unknown):
 
 export async function POST(request: NextRequest) {
   try {
+    const cookieStore = await cookies();
+    const supabaseAuth = createSupabaseServerAuthClient(cookieStore);
+    const { data: { user } } = await supabaseAuth.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const validation = validateRunPipelineBody(body);
     if (!validation.success) {
@@ -134,6 +154,7 @@ export async function POST(request: NextRequest) {
 
     const caseId = await runPipelineFromIntake({
       ...validation.data,
+      user_id: user.id
     });
 
     return NextResponse.json({ caseId, status: "complete" });

@@ -183,7 +183,7 @@ function extractKeywords(content: string, sectionLabel: string): string[] {
 // ---- Main ----
 
 async function main() {
-  console.log("=== Redressa AI - Policy Ingestion ===\n");
+  console.log("=== Redressa - Policy Ingestion ===\n");
 
   // Load env from .env.local
   const envPath = path.resolve(__dirname, "../.env.local");

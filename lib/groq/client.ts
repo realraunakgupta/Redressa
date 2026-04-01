@@ -30,32 +30,88 @@ function getApiKey(): string {
   return apiKey;
 }
 
-async function groqFetch(payload: Record<string, unknown>) {
-  const apiKey = getApiKey();
-  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-  if (!response.ok) {
-    let errorText = await response.text();
-    try {
-      const parsed = JSON.parse(errorText);
-      if (parsed.error && parsed.error.message) {
-        errorText = parsed.error.message;
+async function groqFetch(payload: Record<string, unknown>, maxRetries = 3) {
+  const apiKey = getApiKey();
+  let attempt = 0;
+
+  while (attempt <= maxRetries) {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      let errorText = await response.text();
+      
+      // Auto-Retry on Rate Limit (429)
+      if (response.status === 429 && attempt < maxRetries) {
+        // Try to extract exact wait time "Please try again in 2.29s"
+        const match = errorText.match(/in ([\d.]+)s/);
+        let waitMs = 4000;
+        if (match && match[1]) {
+          waitMs = parseFloat(match[1]) * 1000 + 500;
+        }
+
+        // If wait time is completely absurd (over 20s), fallback immediately
+        if (waitMs > 20000) {
+          console.warn(`[Redressa] Groq wait time too long (${waitMs}ms). Trying fallback...`);
+        } else {
+          console.warn(`[Redressa] Groq rate limit reached! Auto-retrying safely in ${Math.round(waitMs)}ms (Attempt ${attempt + 1}/${maxRetries})...`);
+          await delay(waitMs);
+          attempt++;
+          continue;
+        }
       }
-    } catch {
-      // Keep raw fallback
+
+      // Automatically fallback to Google Gemini if available
+      // This catches "request too large" (413), "limit reached", or exhausted retries
+      const geminiKey = process.env.GEMINI_API_KEY;
+      if (geminiKey && (response.status === 413 || response.status === 429 || errorText.toLowerCase().includes("too large") || errorText.toLowerCase().includes("limit reached"))) {
+         console.warn(`[Redressa] Groq rejected payload (Too Large / Hard Limit). Instantly falling back to Google Gemini 2.5 Flash!`);
+         
+         // Clone payload and swap to Gemini model
+         const geminiPayload = { ...payload, model: "gemini-2.5-flash" };
+         
+         const geminiResp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
+            method: "POST",
+            headers: {
+               "Authorization": `Bearer ${geminiKey}`,
+               "Content-Type": "application/json"
+            },
+            body: JSON.stringify(geminiPayload)
+         });
+
+         if (geminiResp.ok) {
+            const gData = await geminiResp.json();
+            return gData.choices?.[0]?.message?.content || "";
+         } else {
+            errorText = `Groq failed, and Gemini Fallback also failed: ${await geminiResp.text()}`;
+         }
+      }
+
+      // If not 429 or out of retries, parse hard error
+      try {
+        const parsed = JSON.parse(errorText);
+        if (parsed.error && parsed.error.message) {
+          errorText = parsed.error.message;
+        }
+      } catch {
+        // Keep raw fallback
+      }
+      throw new Error(`[Groq Error]: ${errorText}`);
     }
-    throw new Error(`[Groq Error]: ${errorText}`);
+
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || "";
   }
 
-  const data = await response.json();
-  return data.choices?.[0]?.message?.content || "";
+  throw new Error(`[Groq Error]: Max retries exhausted without resolution.`);
 }
 
 /**

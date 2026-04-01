@@ -7,12 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "ingest": "tsx scripts/ingest-policies.ts"
+    "ingest": "node --env-file=.env.local --import tsx scripts/ingest-policies.ts",
+    "cleanup:dev": "node --env-file=.env.local --import tsx scripts/cleanup-development.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.100.1",
     "framer-motion": "^12.38.0",
+    "jspdf": "^4.2.1",
     "lottie-react": "^2.4.1",
     "mammoth": "^1.12.0",
     "next": "16.2.1",

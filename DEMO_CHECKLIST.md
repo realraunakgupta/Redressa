@@ -1,4 +1,4 @@
-# Redressa AI - Demo Checklist
+# Redressa - Demo Checklist
 
 Use this checklist for a clean judging demo.
 

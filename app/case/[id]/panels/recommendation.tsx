@@ -19,39 +19,40 @@ export function RecommendationPanel({
   if (!evaluation && !routes) {
     return (
       <PanelShell title="Recommendation">
-        <p className="text-sm text-neutral-600">Recommendations will appear after evaluation.</p>
+        <p className="text-sm font-sans text-on-surface-muted italic">Recommendations will appear after evaluation.</p>
       </PanelShell>
     );
   }
 
   const assessmentColors: Record<string, string> = {
-    strong: "bg-success-500/10 text-success-500",
-    moderate: "bg-accent-400/10 text-accent-400",
-    weak: "bg-neutral-400/10 text-neutral-400",
+    strong: "bg-[var(--color-success)]/10 text-[var(--color-success)] border border-[var(--color-success)]/20",
+    moderate: "bg-primary/5 text-primary border border-primary/20",
+    weak: "bg-surface text-on-surface-muted border border-[var(--color-border-solid)]",
   };
 
   return (
     <PanelShell title="Recommendation">
       {evaluation && (
-        <div className="mb-4">
-          <p className="text-xs uppercase text-neutral-500">Case Strength</p>
+        <div className="mb-8">
+          <p className="text-[0.65rem] font-sans font-bold uppercase tracking-widest text-on-surface-muted opacity-80 mb-2">Case Strength</p>
           <span
-            className={`mt-1 inline-block rounded-full px-3 py-1 text-xs font-semibold uppercase ${
-              assessmentColors[evaluation.overall_assessment] ?? assessmentColors.moderate
+            className={`inline-block rounded-sm px-3 py-1 text-[10px] font-sans font-bold uppercase tracking-widest ${
+              assessmentColors[evaluation.overall_assessment.toLowerCase()] ?? assessmentColors.moderate
             }`}
           >
-            {evaluation.overall_assessment}
+            [ {evaluation.overall_assessment} ]
           </span>
         </div>
       )}
 
       {evaluation && evaluation.consumer_rights_violated.length > 0 && (
-        <div className="mb-4">
-          <h3 className="text-xs font-medium uppercase text-neutral-500">Rights Violated</h3>
-          <ul className="mt-1.5 space-y-1">
+        <div className="mb-8">
+          <h3 className="text-[0.65rem] font-sans font-bold uppercase tracking-widest text-on-surface-muted opacity-80 mb-3">Rights Violated</h3>
+          <ul className="space-y-2">
             {evaluation.consumer_rights_violated.map((violation, i) => (
-              <li key={i} className="text-xs leading-relaxed text-error-500">
-                - {violation}
+              <li key={i} className="flex gap-3 text-sm font-sans text-[var(--color-error)]">
+                <span className="shrink-0 mt-0.5 opacity-60">•</span>
+                <span className="leading-relaxed">{violation}</span>
               </li>
             ))}
           </ul>
@@ -59,12 +60,13 @@ export function RecommendationPanel({
       )}
 
       {evaluation && evaluation.recommended_actions.length > 0 && (
-        <div className="mb-4">
-          <h3 className="text-xs font-medium uppercase text-neutral-500">Recommended Actions</h3>
-          <ul className="mt-1.5 space-y-1">
+        <div className="mb-8">
+          <h3 className="text-[0.65rem] font-sans font-bold uppercase tracking-widest text-on-surface-muted opacity-80 mb-3">Recommended Actions</h3>
+          <ul className="space-y-3">
             {evaluation.recommended_actions.map((action, i) => (
-              <li key={i} className="text-xs leading-relaxed text-neutral-300">
-                {i + 1}. {action}
+              <li key={i} className="flex gap-3 text-sm font-sans text-on-base">
+                <span className="shrink-0 text-[10px] font-bold text-primary px-1.5 py-0.5 border border-[var(--color-border-ghost)] rounded-sm bg-base mt-0.5 h-fit">{i + 1}</span>
+                <span className="leading-relaxed">{action}</span>
               </li>
             ))}
           </ul>
@@ -72,32 +74,32 @@ export function RecommendationPanel({
       )}
 
       {routes && routes.length > 0 && (
-        <div>
-          <h3 className="text-xs font-medium uppercase text-neutral-500">Escalation Path</h3>
-          <div className="mt-2 space-y-2.5">
+        <div className="pt-2">
+          <h3 className="text-[0.65rem] font-sans font-bold uppercase tracking-widest text-on-surface-muted opacity-80 mb-4">Escalation Path</h3>
+          <div className="space-y-4">
             {routes.map((route, i) => (
               <div
                 key={i}
-                className="rounded-lg border border-neutral-800/50 bg-neutral-950/50 p-4"
+                className="rounded-sm border border-[var(--color-border-ghost)] bg-base p-5 transition-colors hover:border-[var(--color-border-solid)]"
               >
-                <div className="flex items-center gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neutral-800 text-xs font-bold text-neutral-400">
+                <div className="flex items-start gap-4">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm border border-[var(--color-border-solid)] bg-surface text-[10px] font-sans font-bold text-on-base">
                     {i + 1}
                   </span>
                   <div>
-                    <p className="text-xs font-semibold text-neutral-200">{route.target_name}</p>
+                    <p className="text-sm font-sans font-bold text-on-base leading-snug">{route.target_name}</p>
                     {route.contact_info && (
-                      <p className="mt-0.5 text-[10px] uppercase tracking-wider text-neutral-500">
+                      <p className="mt-1 text-[10px] font-sans font-bold uppercase tracking-wider text-on-surface-muted/60">
                         VIA: {route.contact_info}
                       </p>
                     )}
                   </div>
                 </div>
-                <div className="mt-4 pl-9">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
-                    AI Rationale
+                <div className="mt-4 border-t border-[var(--color-border-ghost)] pt-4">
+                  <p className="text-[9px] font-sans font-bold uppercase tracking-widest text-primary/70 mb-2">
+                    System Rationale
                   </p>
-                  <p className="text-xs leading-relaxed text-neutral-400">
+                  <p className="text-sm font-sans text-on-surface-muted leading-relaxed">
                     {route.rationale}
                   </p>
                 </div>
@@ -112,8 +114,8 @@ export function RecommendationPanel({
 
 function PanelShell({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-5">
-      <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-neutral-400">
+    <div className="rounded-sm border border-[var(--color-border-solid)] bg-surface-low p-6 sm:p-8 shadow-sm">
+      <h2 className="mb-6 border-b border-[var(--color-border-ghost)] pb-4 text-xs font-serif font-bold uppercase tracking-widest text-primary">
         {title}
       </h2>
       {children}

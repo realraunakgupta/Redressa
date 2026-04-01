@@ -34,6 +34,10 @@ export interface Database {
           amount: number | null;
           currency: string;
           is_demo: boolean;
+          user_id: string | null;
+          consumer_name: string | null;
+          consumer_email: string | null;
+          consumer_phone: string | null;
         };
         Insert: {
           id?: string;
@@ -48,6 +52,10 @@ export interface Database {
           amount?: number | null;
           currency?: string;
           is_demo?: boolean;
+          user_id?: string | null;
+          consumer_name?: string | null;
+          consumer_email?: string | null;
+          consumer_phone?: string | null;
         };
         Update: {
           id?: string;
@@ -62,6 +70,10 @@ export interface Database {
           amount?: number | null;
           currency?: string;
           is_demo?: boolean;
+          user_id?: string | null;
+          consumer_name?: string | null;
+          consumer_email?: string | null;
+          consumer_phone?: string | null;
         };
       };
       case_files: {
@@ -236,6 +248,223 @@ export interface Database {
           created_at?: string;
         };
       };
+      inbound_messages: {
+        Row: {
+          id: string;
+          thread_id: string;
+          case_id: string;
+          user_id: string;
+          gmail_message_id: string;
+          subject: string;
+          body: string;
+          from_address: string;
+          to_address: string;
+          classification_category: "resolved" | "partial_resolution" | "stalling" | "asking_for_info" | "rejecting_liability" | "escalating_internally" | "unclear" | null;
+          classification_reason: string | null;
+          parent_message_id: string | null;
+          received_at: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          thread_id: string;
+          case_id: string;
+          user_id: string;
+          gmail_message_id: string;
+          subject: string;
+          body: string;
+          from_address: string;
+          to_address: string;
+          classification_category?: "resolved" | "partial_resolution" | "stalling" | "asking_for_info" | "rejecting_liability" | "escalating_internally" | "unclear" | null;
+          classification_reason?: string | null;
+          parent_message_id?: string | null;
+          received_at: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          thread_id?: string;
+          case_id?: string;
+          user_id?: string;
+          gmail_message_id?: string;
+          subject?: string;
+          body?: string;
+          from_address?: string;
+          to_address?: string;
+          classification_category?: "resolved" | "partial_resolution" | "stalling" | "asking_for_info" | "rejecting_liability" | "escalating_internally" | "unclear" | null;
+          classification_reason?: string | null;
+          parent_message_id?: string | null;
+          received_at?: string;
+          created_at?: string;
+        };
+      };
+      oauth_accounts: {
+        Row: {
+          id: string;
+          user_id: string;
+          provider: "google";
+          gmail_address: string;
+          access_token: string;
+          refresh_token: string;
+          token_expires_at: string;
+          scopes: string[];
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          provider?: "google";
+          gmail_address: string;
+          access_token: string;
+          refresh_token: string;
+          token_expires_at: string;
+          scopes?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          provider?: "google";
+          gmail_address?: string;
+          access_token?: string;
+          refresh_token?: string;
+          token_expires_at?: string;
+          scopes?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      communication_threads: {
+        Row: {
+          id: string;
+          case_id: string;
+          user_id: string;
+          escalation_target: string;
+          target_email: string;
+          target_name: string;
+          channel: "email";
+          state: "draft"|"ready_to_send"|"sent"|"awaiting_reply"|"reply_received"|"needs_user_input"|"ready_to_follow_up"|"paused"|"escalated"|"resolved"|"closed";
+          gmail_thread_id: string | null;
+          automation_mode: "manual"|"assisted"|"autopilot";
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          case_id: string;
+          user_id: string;
+          escalation_target: string;
+          target_email: string;
+          target_name: string;
+          channel?: "email";
+          state?: "draft"|"ready_to_send"|"sent"|"awaiting_reply"|"reply_received"|"needs_user_input"|"ready_to_follow_up"|"paused"|"escalated"|"resolved"|"closed";
+          gmail_thread_id?: string | null;
+          automation_mode?: "manual"|"assisted"|"autopilot";
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          case_id?: string;
+          user_id?: string;
+          escalation_target?: string;
+          target_email?: string;
+          target_name?: string;
+          channel?: "email";
+          state?: "draft"|"ready_to_send"|"sent"|"awaiting_reply"|"reply_received"|"needs_user_input"|"ready_to_follow_up"|"paused"|"escalated"|"resolved"|"closed";
+          gmail_thread_id?: string | null;
+          automation_mode?: "manual"|"assisted"|"autopilot";
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      outbound_messages: {
+        Row: {
+          id: string;
+          thread_id: string;
+          case_id: string;
+          user_id: string;
+          subject: string;
+          body: string;
+          from_address: string;
+          to_address: string;
+          status: "draft"|"approved"|"sending"|"sent"|"failed";
+          gmail_message_id: string | null;
+          sent_at: string | null;
+          approval_required: boolean;
+          approved_at: string | null;
+          approved_by: string | null;
+          generation_source: "pipeline"|"user_edit"|"ai_followup";
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          thread_id: string;
+          case_id: string;
+          user_id: string;
+          subject: string;
+          body: string;
+          from_address: string;
+          to_address: string;
+          status?: "draft"|"approved"|"sending"|"sent"|"failed";
+          gmail_message_id?: string | null;
+          sent_at?: string | null;
+          approval_required?: boolean;
+          approved_at?: string | null;
+          approved_by?: string | null;
+          generation_source?: "pipeline"|"user_edit"|"ai_followup";
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          thread_id?: string;
+          case_id?: string;
+          user_id?: string;
+          subject?: string;
+          body?: string;
+          from_address?: string;
+          to_address?: string;
+          status?: "draft"|"approved"|"sending"|"sent"|"failed";
+          gmail_message_id?: string | null;
+          sent_at?: string | null;
+          approval_required?: boolean;
+          approved_at?: string | null;
+          approved_by?: string | null;
+          generation_source?: "pipeline"|"user_edit"|"ai_followup";
+          created_at?: string;
+        };
+      };
+      approval_events: {
+        Row: {
+          id: string;
+          message_id: string;
+          user_id: string;
+          action: "approved"|"rejected"|"edited_and_approved";
+          edited_body: string | null;
+          reason: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          message_id: string;
+          user_id: string;
+          action: "approved"|"rejected"|"edited_and_approved";
+          edited_body?: string | null;
+          reason?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          message_id?: string;
+          user_id?: string;
+          action?: "approved"|"rejected"|"edited_and_approved";
+          edited_body?: string | null;
+          reason?: string | null;
+          created_at?: string;
+        };
+      };
     };
   };
 }
@@ -249,3 +478,9 @@ export type CaseEventRow = Database["public"]["Tables"]["case_events"]["Row"];
 export type PolicyDocRow = Database["public"]["Tables"]["policy_documents"]["Row"];
 export type PolicyChunkRow = Database["public"]["Tables"]["policy_chunks"]["Row"];
 export type GeneratedOutputRow = Database["public"]["Tables"]["generated_outputs"]["Row"];
+
+export type OAuthAccountRow = Database["public"]["Tables"]["oauth_accounts"]["Row"];
+export type CommunicationThreadRow = Database["public"]["Tables"]["communication_threads"]["Row"];
+export type OutboundMessageRow = Database["public"]["Tables"]["outbound_messages"]["Row"];
+export type InboundMessageRow = Database["public"]["Tables"]["inbound_messages"]["Row"];
+export type ApprovalEventRow = Database["public"]["Tables"]["approval_events"]["Row"];

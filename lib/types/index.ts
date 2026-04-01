@@ -1,5 +1,5 @@
 /**
- * Redressa AI - Core Type Definitions
+ * Redressa - Core Type Definitions
  *
  * These types define the shape of data flowing through the pipeline.
  * They will be expanded as the backend schema is built out.

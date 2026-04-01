@@ -1,94 +1,110 @@
 @import "tailwindcss";
 
 /* ============================================
-   Redressa AI — Design System (Prompt 12)
+   Redressa — Design System: Redressa Manuscript
    ============================================
-   Charcoal + Electric Cobalt + System Fonts
-   Premium analyst-console aesthetic.
+   Deep Navy-Black + Warm Ivory + Champagne Brass
+   Premium High-End Law Firm Aesthetic.
    ============================================ */
 
+/* 
+  Using Tailwind v4 @theme directive to override 
+  default theme values explicitly.
+*/
 @theme {
-  /* Primary — Electric Cobalt Blue */
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
-  --color-primary-950: #172554;
+  /* Brand Foundation */
+  --color-primary-100: #F7E382;
+  --color-primary-200: #E2CF70;
+  --color-primary: #C5B358;
+  --color-primary-400: #DAC769;
+  --color-primary-900: #6C5E06;
+  --color-primary-text: #393000;
 
-  /* Neutral — Charcoal / Zinc scale */
-  --color-neutral-50: #fafafa;
-  --color-neutral-100: #f4f4f5;
-  --color-neutral-200: #e4e4e7;
-  --color-neutral-300: #d4d4d8;
-  --color-neutral-400: #a1a1aa;
-  --color-neutral-500: #71717a;
-  --color-neutral-600: #52525b;
-  --color-neutral-700: #3f3f46;
-  --color-neutral-800: #27272a;
-  --color-neutral-900: #18181b;
-  --color-neutral-950: #09090b;
+  /* Surfaces & Backgrounds */
+  --color-base: #111318;
+  --color-surface-low: #1A1C20;
+  --color-surface: #1E2024;
+  --color-surface-high: #282A2E;
+  
+  /* Text & Typography */
+  --color-on-base: #E2E2E8;
+  --color-on-surface: #E2E2E8;
+  --color-on-surface-muted: #CDC6B3;
 
-  /* Accent — Amber (warnings / weak signals) */
-  --color-accent-400: #fbbf24;
-  --color-accent-500: #f59e0b;
+  /* Lines & Borders */
+  --color-border-ghost: #4B4738; /* Used for ghost borders at 20% opacity usually */
+  --color-border-solid: #2F3035; /* Subtle standard border */
 
   /* Status */
-  --color-success-500: #22c55e;
-  --color-error-500: #dc2626;
-
-  /* Typography — system fonts only, no external deps */
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: "SF Mono", "Cascadia Code", "Segoe UI Mono", Consolas, monospace;
+  --color-success: #22c55e;
+  --color-error: #ffb4ab;
+  --color-warning: #fbbf24;
 }
 
-/* Base */
+/* Base Styles */
 body {
-  font-family: var(--font-sans);
-  background-color: var(--color-neutral-900);
-  color: var(--color-neutral-100);
+  background-color: var(--color-base);
+  color: var(--color-on-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar refinement for charcoal */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--color-neutral-700); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-neutral-600); }
-
-/* ── Glassmorphic Background: AI Scanner Pulse ── */
-@keyframes scanPulse {
-  0%   { transform: translateY(-60px); opacity: 0; }
-  20%  { opacity: 1; }
-  80%  { opacity: 1; }
-  100% { transform: translateY(280px); opacity: 0; }
+/* Document Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--color-base); }
+::-webkit-scrollbar-thumb { 
+  background: var(--color-surface-high); 
+  border-radius: 4px; 
 }
+::-webkit-scrollbar-thumb:hover { background: var(--color-border-ghost); }
 
-/* ── Primary CTA Button with Cobalt Glow ── */
-.cta-primary {
+/* Core Interactive Primitives */
+.btn-primary {
   display: inline-flex;
   align-items: center;
-  border-radius: 0.375rem;
-  background-color: var(--color-primary-600);
+  justify-content: center;
+  border-radius: 0.375rem; /* md radius leaning sharp */
+  background-color: var(--color-primary);
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #fff;
-  text-decoration: none;
-  transition: background-color 0.15s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  color: var(--color-primary-text);
+  border: 1px solid transparent;
+  transition: all 0.2s ease-out;
 }
-.cta-primary:hover {
-  background-color: var(--color-primary-500);
-  box-shadow: 0 0 0 1px rgba(37,99,235,0.4), 0 0 20px rgba(37,99,235,0.35), 0 0 40px rgba(37,99,235,0.15);
-  transform: translateY(-1px);
+
+.btn-primary:hover {
+  background-color: var(--color-primary-200);
 }
-.cta-primary:active {
-  transform: translateY(0);
-  box-shadow: none;
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  background-color: transparent;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-on-base);
+  border: 1px solid rgba(75, 71, 56, 0.4); /* Ghost border */
+  transition: all 0.2s ease-out;
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-surface-low);
+  border-color: rgba(75, 71, 56, 0.8);
+}
+
+.input-editorial {
+  background-color: var(--color-surface-low);
+  border: none;
+  border-bottom: 2px solid var(--color-border-ghost);
+  color: var(--color-on-surface);
+  transition: border-bottom-color 0.2s ease-out;
+}
+
+.input-editorial:focus {
+  outline: none;
+  border-bottom-color: var(--color-primary);
 }

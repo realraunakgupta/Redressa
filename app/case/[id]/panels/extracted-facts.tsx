@@ -19,7 +19,7 @@ export function ExtractedFactsPanel({
   if (!facts) {
     return (
       <PanelShell title="Extracted Facts">
-        <p className="text-sm text-neutral-600">
+        <p className="text-sm font-sans text-on-surface-muted italic">
           Facts will appear here after the pipeline processes this complaint.
         </p>
       </PanelShell>
@@ -28,12 +28,12 @@ export function ExtractedFactsPanel({
 
   return (
     <PanelShell title="Extracted Facts">
-      <div className="mb-5">
-        <h3 className="text-xs font-medium uppercase text-neutral-500">Summary</h3>
-        <p className="mt-1.5 leading-relaxed text-neutral-200">{facts.complaint_summary}</p>
+      <div className="mb-8">
+        <h3 className="text-[0.65rem] font-sans font-bold uppercase tracking-widest text-on-surface-muted opacity-80 mb-2">Summary</h3>
+        <p className="leading-relaxed text-sm font-sans text-on-base">{facts.complaint_summary}</p>
       </div>
 
-      <div className="mb-5 grid grid-cols-2 gap-3">
+      <div className="mb-8 grid grid-cols-2 gap-y-6 gap-x-4">
         <DetailItem label="Merchant" value={facts.merchant_name} />
         <DetailItem label="Product / Service" value={facts.product_or_service} />
         <DetailItem label="Order ID" value={facts.order_id} />
@@ -41,17 +41,17 @@ export function ExtractedFactsPanel({
           label="Amount"
           value={facts.amount ? `${facts.currency} ${facts.amount.toLocaleString()}` : null}
         />
-        <DetailItem label="Desired Resolution" value={facts.desired_resolution} />
+        <DetailItem label="Desired Resolution" value={facts.desired_resolution} className="col-span-2" />
       </div>
 
       {facts.issues.length > 0 && (
-        <div className="mb-5">
-          <h3 className="text-xs font-medium uppercase text-neutral-500">Issues Identified</h3>
-          <ul className="mt-1.5 space-y-1">
+        <div className="mb-8">
+          <h3 className="text-[0.65rem] font-sans font-bold uppercase tracking-widest text-on-surface-muted opacity-80 mb-3">Issues Identified</h3>
+          <ul className="space-y-2">
             {facts.issues.map((issue, i) => (
-              <li key={i} className="flex gap-2 text-sm text-neutral-300">
-                <span className="shrink-0 text-neutral-600">-</span>
-                {issue}
+              <li key={i} className="flex gap-3 text-sm font-sans text-on-base">
+                <span className="shrink-0 text-primary/60 mt-0.5">•</span>
+                <span className="leading-relaxed">{issue}</span>
               </li>
             ))}
           </ul>
@@ -59,13 +59,13 @@ export function ExtractedFactsPanel({
       )}
 
       {facts.consumer_actions_taken.length > 0 && (
-        <div className="mb-5">
-          <h3 className="text-xs font-medium uppercase text-neutral-500">Actions Already Taken</h3>
-          <ul className="mt-1.5 space-y-1">
+        <div className="mb-8">
+          <h3 className="text-[0.65rem] font-sans font-bold uppercase tracking-widest text-on-surface-muted opacity-80 mb-3">Actions Already Taken</h3>
+          <ul className="space-y-2">
             {facts.consumer_actions_taken.map((action, i) => (
-              <li key={i} className="flex gap-2 text-sm text-neutral-400">
-                <span className="shrink-0 text-neutral-600">-</span>
-                {action}
+              <li key={i} className="flex gap-3 text-sm font-sans text-on-surface-muted">
+                <span className="shrink-0 text-primary/60 mt-0.5">•</span>
+                <span className="leading-relaxed">{action}</span>
               </li>
             ))}
           </ul>
@@ -73,13 +73,13 @@ export function ExtractedFactsPanel({
       )}
 
       {facts.merchant_responses.length > 0 && (
-        <div className="mb-5">
-          <h3 className="text-xs font-medium uppercase text-neutral-500">Merchant Responses</h3>
-          <ul className="mt-1.5 space-y-1">
+        <div className="mb-8">
+          <h3 className="text-[0.65rem] font-sans font-bold uppercase tracking-widest text-on-surface-muted opacity-80 mb-3">Merchant Responses</h3>
+          <ul className="space-y-2">
             {facts.merchant_responses.map((resp, i) => (
-              <li key={i} className="flex gap-2 text-sm text-neutral-400">
-                <span className="shrink-0 text-neutral-600">-</span>
-                {resp}
+              <li key={i} className="flex gap-3 text-sm font-sans text-on-surface-muted">
+                <span className="shrink-0 text-primary/60 mt-0.5">•</span>
+                <span className="leading-relaxed">{resp}</span>
               </li>
             ))}
           </ul>
@@ -87,17 +87,17 @@ export function ExtractedFactsPanel({
       )}
 
       {timeline && timeline.length > 0 && (
-        <div>
-          <h3 className="text-xs font-medium uppercase text-neutral-500 mb-4">Timeline</h3>
-          <div className="relative border-l-2 border-neutral-800 ml-2 space-y-5">
+        <div className="pt-2">
+          <h3 className="text-[0.65rem] font-sans font-bold uppercase tracking-widest text-on-surface-muted opacity-80 mb-5">Timeline of Events</h3>
+          <div className="relative border-l-[1.5px] border-[var(--color-border-ghost)] ml-2.5 space-y-6">
             {timeline.map((entry, i) => (
-              <div key={i} className="relative pl-5">
-                <span className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full bg-neutral-600 ring-2 ring-neutral-900" />
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[10px] uppercase font-bold text-neutral-500">
+              <div key={i} className="relative pl-6">
+                <span className="absolute -left-[4.5px] top-1.5 h-[7px] w-[7px] bg-primary rounded-full ring-4 ring-surface-low" />
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] uppercase font-sans font-bold tracking-wider text-on-surface-muted/70">
                     {entry.date || "Unknown Date"}
                   </span>
-                  <span className="text-xs text-neutral-300 leading-snug">{entry.label}</span>
+                  <span className="text-sm font-sans text-on-base leading-snug">{entry.label}</span>
                 </div>
               </div>
             ))}
@@ -108,19 +108,19 @@ export function ExtractedFactsPanel({
   );
 }
 
-function DetailItem({ label, value }: { label: string; value: string | null | undefined }) {
+function DetailItem({ label, value, className = "" }: { label: string; value: string | null | undefined; className?: string }) {
   return (
-    <div>
-      <p className="text-xs text-neutral-500">{label}</p>
-      <p className="mt-0.5 text-sm text-neutral-200">{value ?? "-"}</p>
+    <div className={className}>
+      <p className="text-[0.65rem] font-sans font-bold uppercase tracking-widest text-on-surface-muted opacity-80">{label}</p>
+      <p className="mt-1 text-sm font-sans text-on-base leading-relaxed">{value ?? "—"}</p>
     </div>
   );
 }
 
 function PanelShell({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-5">
-      <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-neutral-400">
+    <div className="rounded-sm border border-[var(--color-border-solid)] bg-surface-low p-6 sm:p-8 shadow-sm">
+      <h2 className="mb-6 border-b border-[var(--color-border-ghost)] pb-4 text-xs font-serif font-bold uppercase tracking-widest text-primary">
         {title}
       </h2>
       {children}

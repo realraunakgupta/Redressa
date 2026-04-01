@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isSupabaseConfigured, isGroqConfigured } from "@/lib/env";
+import { isSupabaseConfigured, isGroqConfigured, isOcrSpaceConfigured, isGoogleAuthConfigured, isGeminiConfigured } from "@/lib/env";
 
 /**
  * GET /api/health
@@ -27,14 +27,28 @@ export async function GET() {
     }
   }
 
+  const ocrOk = isOcrSpaceConfigured();
+  const authOk = isGoogleAuthConfigured();
+  const geminiOk = isGeminiConfigured();
+
   const status = {
-    status: supabaseOk && groqOk ? "ok" : "degraded",
-    app: "redressa-ai",
+    status: supabaseOk && groqOk && ocrOk ? "ok" : "degraded",
+    app: "redressa",
     version: "0.1.0",
     timestamp: new Date().toISOString(),
     checks: {
-      supabase: supabaseStatus,
-      groq: groqOk ? "ok" : "not_configured",
+      core: {
+        supabase: supabaseStatus,
+        groq: groqOk ? "ok" : "not_configured",
+        ocr_space: ocrOk ? "ok" : "not_configured",
+      },
+      communication: {
+        google_auth: authOk ? "ok" : "not_configured",
+        gmail_send: authOk ? "ok" : "unauthorized",
+      },
+      fallback: {
+        gemini: geminiOk ? "ok" : "not_configured"
+      }
     },
   };
 

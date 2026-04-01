@@ -25,9 +25,9 @@ export function HeroSection() {
         initial="hidden"
         animate="visible"
         variants={fadeUp}
-        className="text-xs font-semibold uppercase tracking-widest text-primary-500 mb-3"
+        className="text-xs font-sans font-semibold uppercase tracking-widest text-[#C5B358] mb-4"
       >
-        Agentic Consumer Redressal
+        Consumer Redressal
       </motion.p>
 
       {/* H1 */}
@@ -36,11 +36,10 @@ export function HeroSection() {
         initial="hidden"
         animate="visible"
         variants={fadeUp}
-        className="text-4xl font-bold tracking-tight text-neutral-50 leading-tight"
+        className="text-5xl sm:text-6xl font-serif font-medium tracking-tight text-on-base leading-tight"
       >
-        Your Evidence.{" "}
-        <span className="text-primary-400">AI-Verified.</span>{" "}
-        Case-Ready.
+        Your Evidence.<br/>
+        <span className="text-primary tracking-normal italic">AI-Verified.</span> Case-Ready.
       </motion.h1>
 
       {/* Body copy */}
@@ -49,10 +48,10 @@ export function HeroSection() {
         initial="hidden"
         animate="visible"
         variants={fadeUp}
-        className="mt-4 text-base text-neutral-400 leading-relaxed"
+        className="mt-6 text-lg font-sans text-on-surface-muted leading-relaxed max-w-xl"
       >
         Turn messy complaint evidence into grounded, escalation-ready claim
-        packages. Upload your evidence, and the agentic pipeline will extract
+        packages. Upload your evidence, and the pipeline will extract
         facts, retrieve relevant policies, evaluate your position, and generate
         action-ready outputs.
       </motion.p>
@@ -63,9 +62,9 @@ export function HeroSection() {
         initial="hidden"
         animate="visible"
         variants={fadeUp}
-        className="mt-7 flex items-center gap-4"
+        className="mt-8 flex items-center gap-4"
       >
-        <Link href="/new" className="cta-primary">
+        <Link href="/new" className="btn-primary text-base px-6 py-3">
           Start New Claim
         </Link>
       </motion.div>
@@ -76,7 +75,7 @@ export function HeroSection() {
         initial="hidden"
         animate="visible"
         variants={fadeUp}
-        className="mt-5 flex flex-wrap gap-2"
+        className="mt-8 flex flex-wrap gap-3"
       >
         {[
           "⚖ DGCA § 8.3 Cited",
@@ -85,7 +84,7 @@ export function HeroSection() {
         ].map((chip) => (
           <span
             key={chip}
-            className="inline-flex items-center rounded-full border border-primary-800/60 bg-primary-950/30 px-3 py-1 text-xs font-medium text-primary-400"
+            className="inline-flex items-center rounded-sm border border-[var(--color-border-ghost)] bg-surface-low px-3 py-1.5 text-xs font-sans font-medium text-on-surface-muted"
           >
             {chip}
           </span>
@@ -97,7 +96,7 @@ export function HeroSection() {
         initial="hidden"
         animate="visible"
         variants={fadeUp}
-        className="mt-5 text-xs text-neutral-600"
+        className="mt-6 text-xs font-sans text-on-surface-muted/50 uppercase tracking-wider"
       >
         Guidance workflow, not legal advice.
       </motion.p>

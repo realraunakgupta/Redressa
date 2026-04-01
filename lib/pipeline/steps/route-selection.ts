@@ -8,6 +8,7 @@
 import { addCaseEvent } from "@/lib/supabase/helpers";
 import type { EscalationRoute, ComplaintCategory } from "@/lib/types";
 import type { EvaluationResult } from "./evaluation";
+import type { ExtractedFacts } from "./extraction";
 
 // Curated escalation routes for Phase 1 categories
 const AVIATION_ROUTES: EscalationRoute[] = [
@@ -88,12 +89,136 @@ const ECOMMERCE_ROUTES: EscalationRoute[] = [
   },
 ];
 
+const ECOMMERCE_ROUTES_MYNTRA: EscalationRoute[] = [
+  {
+    target: "grievance_cell",
+    target_name: "Myntra Customer Support",
+    contact_info: "In-app Help Center | support@myntra.com",
+    rationale: "First point of contact. Use the app to raise a formal ticket.",
+    priority: 1,
+    legal_weight: "low",
+    estimated_timeframe: "3-7 days",
+  },
+  {
+    target: "nodal_officer",
+    target_name: "Myntra Grievance Officer",
+    contact_info: "grievance.officer@myntra.com",
+    rationale: "If customer support does not resolve within 7 days, escalate to the designated grievance officer.",
+    priority: 2,
+    legal_weight: "medium",
+    estimated_timeframe: "15-30 days",
+  },
+  {
+    target: "consumer_forum",
+    target_name: "National Consumer Helpline",
+    contact_info: "https://consumerhelpline.gov.in | 1800-11-4000",
+    rationale: "File a complaint on the National Consumer Helpline portal for mediation.",
+    priority: 3,
+    legal_weight: "high",
+    estimated_timeframe: "30-60 days",
+  },
+  {
+    target: "consumer_forum",
+    target_name: "Consumer Disputes Redressal Forum",
+    contact_info: "https://edaakhil.nic.in",
+    rationale: "File a formal case under the Consumer Protection Act, 2019 for legal redressal.",
+    priority: 4,
+    legal_weight: "high",
+    estimated_timeframe: "3-6 months",
+  },
+];
+
+function getRoutesForMerchant(category: ComplaintCategory, merchantName: string | null): EscalationRoute[] {
+  const norm = (merchantName || "").toLowerCase().trim();
+  const displayMerchant = merchantName || "the company";
+  
+  if (category === "aviation") {
+     if (norm.includes("indigo")) return AVIATION_ROUTES;
+     
+     // Generic Aviation routes
+     return [
+       {
+         target: "grievance_cell",
+         target_name: `${displayMerchant} Grievance Cell`,
+         contact_info: "Use the airline's official support channel or grievance contact listed on its website/app.",
+         rationale: "Contact the airline's official customer support or grievance channel first for initial resolution.",
+         priority: 1,
+         legal_weight: "low",
+         estimated_timeframe: "30 days",
+       },
+       {
+         target: "regulator",
+         target_name: "DGCA AirSewa Portal",
+         contact_info: "https://airsewa.gov.in | passenger-grievance@dgca.nic.in",
+         rationale: "If the airline does not resolve within 30 days, escalate to the DGCA passenger grievance portal.",
+         priority: 3,
+         legal_weight: "high",
+         estimated_timeframe: "45-60 days",
+       },
+       {
+         target: "consumer_forum",
+         target_name: "Consumer Disputes Redressal Forum",
+         contact_info: "https://consumerhelpline.gov.in | 1800-11-4000",
+         rationale: "File a formal complaint under the Consumer Protection Act, 2019 if regulatory escalation is insufficient.",
+         priority: 4,
+         legal_weight: "high",
+         estimated_timeframe: "3-6 months",
+       }
+     ];
+  }
+  
+  // Ecommerce
+  if (norm.includes("flipkart")) return ECOMMERCE_ROUTES;
+  if (norm.includes("myntra")) return ECOMMERCE_ROUTES_MYNTRA;
+  
+  // Generic Ecommerce routes
+  return [
+       {
+         target: "grievance_cell",
+         target_name: `${displayMerchant} Customer Support`,
+         contact_info: "Use the merchant's official support channel or in-app help center.",
+         rationale: "First point of contact. Ensure you log a formal ticket using an official support channel.",
+         priority: 1,
+         legal_weight: "low",
+         estimated_timeframe: "3-7 days",
+       },
+       {
+         target: "nodal_officer",
+         target_name: `${displayMerchant} Grievance Officer`,
+         contact_info: "Refer to the merchant's official grievance officer details listed on its website/app, if available.",
+         rationale: "Escalate to the platform's grievance officer as per the 2020 E-commerce Rules when official contact details are available.",
+         priority: 2,
+         legal_weight: "medium",
+         estimated_timeframe: "15-30 days",
+       },
+       {
+         target: "consumer_forum",
+         target_name: "National Consumer Helpline",
+         contact_info: "https://consumerhelpline.gov.in | 1800-11-4000",
+         rationale: "File a complaint on the National Consumer Helpline portal for mediation.",
+         priority: 3,
+         legal_weight: "high",
+         estimated_timeframe: "30-60 days",
+       },
+       {
+         target: "consumer_forum",
+         target_name: "Consumer Disputes Redressal Forum",
+         contact_info: "https://edaakhil.nic.in",
+         rationale: "File a formal case under the Consumer Protection Act, 2019 for legal redressal.",
+         priority: 4,
+         legal_weight: "high",
+         estimated_timeframe: "3-6 months",
+       }
+   ];
+}
+
 export async function stepRouteSelection(
   caseId: string,
   category: ComplaintCategory,
-  evaluation: EvaluationResult
+  evaluation: EvaluationResult,
+  facts: ExtractedFacts
 ): Promise<EscalationRoute[]> {
-  const baseRoutes = category === "aviation" ? AVIATION_ROUTES : ECOMMERCE_ROUTES;
+  const baseRoutes = getRoutesForMerchant(category, facts.merchant_name || null);
 
   let routes: EscalationRoute[] = [];
   
