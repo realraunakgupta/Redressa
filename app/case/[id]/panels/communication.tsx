@@ -25,12 +25,19 @@ export function CommunicationPanel({ threads, messages, inboundMessages, hasGmai
   const activeThread = threads.length > 0 ? threads[0] : null;
   const activeMessage = activeThread ? messages.find(m => m.thread_id === activeThread.id) : null;
   const [localStatus, setLocalStatus] = useState<string | null>(activeMessage?.status || null);
+  const [localMode, setLocalMode] = useState<string>(activeThread?.automation_mode || "manual");
 
   useEffect(() => {
     if (activeMessage?.status) {
       setLocalStatus(activeMessage.status);
     }
   }, [activeMessage?.status]);
+
+  useEffect(() => {
+    if (activeThread?.automation_mode) {
+      setLocalMode(activeThread.automation_mode);
+    }
+  }, [activeThread?.automation_mode]);
 
   const router = useRouter();
 
@@ -96,6 +103,7 @@ export function CommunicationPanel({ threads, messages, inboundMessages, hasGmai
     setIsSending(true);
     setSendError(null);
     try {
+      const isDemoThread = threadId.startsWith("demo-");
       const finalToAddress = editedTo !== null ? editedTo : messages.find(m => m.id === messageId)?.to_address;
       const finalSubject = editedSubject !== null ? editedSubject : messages.find(m => m.id === messageId)?.subject;
       const finalBody = editedBody !== null ? editedBody : messages.find(m => m.id === messageId)?.body;
@@ -129,7 +137,9 @@ export function CommunicationPanel({ threads, messages, inboundMessages, hasGmai
       
       // Successfully sent, update local state immediately and refresh server state
       setLocalStatus("sent");
-      router.refresh();
+      if (!isDemoThread) {
+        router.refresh();
+      }
       setIsSending(false);
       
     } catch (err: unknown) {
@@ -160,14 +170,30 @@ export function CommunicationPanel({ threads, messages, inboundMessages, hasGmai
 
   const handleToggleMode = async (threadId: string, currentMode: string) => {
     setIsToggling(true);
-    const newMode = currentMode === "autopilot" ? "assisted" : "autopilot";
+    setSendError(null);
+    const modeOrder = ["manual", "assisted", "autopilot"] as const;
+    const currentIndex = modeOrder.indexOf(
+      (currentMode === "manual" || currentMode === "assisted" || currentMode === "autopilot")
+        ? currentMode
+        : "manual"
+    );
+    const newMode = modeOrder[(currentIndex + 1) % modeOrder.length];
+    
     try {
+      if (threadId.startsWith("demo-")) {
+        await new Promise(r => setTimeout(r, 600));
+        setLocalMode(newMode);
+        setIsToggling(false);
+        return;
+      }
+
       const resp = await fetch("/api/communication/toggle-mode", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ thread_id: threadId, mode: newMode })
       });
       if (!resp.ok) throw new Error("Failed to change mode");
+      setLocalMode(newMode);
       router.refresh();
       setIsToggling(false);
     } catch (err: unknown) {
@@ -225,17 +251,17 @@ export function CommunicationPanel({ threads, messages, inboundMessages, hasGmai
 
   return (
     <div className="rounded-sm border border-[var(--color-border-solid)] bg-surface p-6 sm:p-8 shadow-sm overflow-hidden relative mt-8">
-      <div className="flex items-center justify-between mb-6 border-b border-[var(--color-border-ghost)] pb-4">
-        <div>
-          <h2 className="text-sm font-serif font-bold uppercase tracking-widest text-primary">Communication & Escalation</h2>
-          <p className="text-[10px] font-sans font-medium uppercase tracking-wider text-on-surface-muted/60 mt-1">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between mb-6 border-b border-[var(--color-border-ghost)] pb-4 gap-4">
+        <div className="flex-1 min-w-0 pr-4">
+          <h2 className="text-sm font-serif font-bold uppercase tracking-widest text-primary truncate">Communication & Escalation</h2>
+          <p className="text-[10px] font-sans font-medium uppercase tracking-wider text-on-surface-muted/60 mt-1 truncate">
             {isSent 
                ? `Successfully escalated to ${activeThread.target_name}` 
                : `Ready to escalate to ${activeThread.target_name}`}
           </p>
         </div>
-        <div className="flex items-center gap-3">
-            {isSent && hasGmail && (
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {isSent && hasGmail && !activeThread.id.startsWith("demo-") && (
                <button 
                   onClick={() => handleSyncReplies(activeThread.id)}
                   disabled={isSyncing}
@@ -244,18 +270,20 @@ export function CommunicationPanel({ threads, messages, inboundMessages, hasGmai
                   {isSyncing ? "Syncing..." : "Sync Replies"}
                </button>
             )}
-            {isSent && hasGmail && (
+            {(isSent || activeThread.id.startsWith("demo-")) && (
                <button 
-                  onClick={() => handleToggleMode(activeThread.id, activeThread.automation_mode)}
+                  onClick={() => handleToggleMode(activeThread.id, localMode)}
                   disabled={isToggling}
                   className={`px-4 py-1.5 text-[10px] font-sans font-bold uppercase tracking-widest rounded-sm border transition-colors disabled:opacity-50 ${
-                     activeThread.automation_mode === "autopilot" 
+                     localMode === "autopilot" 
                         ? "border-[var(--color-success)]/40 bg-[var(--color-success)]/5 text-[var(--color-success)]"
+                        : localMode === "assisted"
+                           ? "border-[var(--color-primary)]/40 bg-[var(--color-primary)]/5 text-primary"
                         : "border-[var(--color-border-solid)] bg-surface text-primary"
                   }`}
-                  title="Click to toggle between Assisted and Autopilot modes"
+                  title="Click to cycle between Manual, Assisted, and Autopilot modes"
                >
-                  {isToggling ? "Updating..." : `${activeThread.automation_mode} Mode`}
+                  {isToggling ? "Updating..." : `${localMode} Mode`}
                </button>
             )}
         </div>
@@ -416,49 +444,49 @@ export function CommunicationPanel({ threads, messages, inboundMessages, hasGmai
       )}
 
       <div className="flex justify-end pt-2">
-         {isSent ? (
-            <div className="flex items-center text-success-500 text-sm font-medium">
-               <svg className="w-5 h-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-               </svg>
-               Sent via Gmail
-            </div>
-         ) : !hasGmail ? (
-            <button
-               onClick={handleConnectGmail}
-               disabled={isConnecting}
-               className="btn-primary text-[10px] sm:text-xs py-2 px-6 flex items-center transition-all disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-               {isConnecting ? (
-                  "Connecting..."
-               ) : (
-                  <>
-                     <svg className="w-3.5 h-3.5 mr-2 opacity-80" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.9 8.2,4.73 12.2,4.73C15.29,4.73 17.1,6.7 17.1,6.7L19,4.72C19,4.72 16.56,2 12.1,2C6.42,2 2.03,6.8 2.03,12C2.03,17.05 6.36,22 12.22,22C17.05,22 21.5,18.33 21.5,12.91C21.5,11.76 21.35,11.1 21.35,11.1V11.1Z" />
-                     </svg>
-                     Connect Gmail to Send
-                  </>
-               )}
-            </button>
-         ) : (
-            <button
-               onClick={() => handleApproveAndSend(activeMessage.id, activeThread.id)}
-               disabled={isSending}
-               className="btn-primary text-[10px] sm:text-xs py-2.5 px-6 flex items-center transition-all disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-               {isSending ? (
-                  <>
-                     <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                     </svg>
-                     Sending...
-                  </>
-               ) : (
-                  "Approve & Send via Gmail"
-               )}
-            </button>
-         )}
+          {isSent || activeThread.id.startsWith("demo-") ? (
+             <div className="flex items-center text-success-500 text-sm font-medium">
+                <svg className="w-5 h-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {activeThread.id.startsWith("demo-") ? "Sent via Agent" : "Sent via Gmail"}
+             </div>
+          ) : !hasGmail ? (
+             <button
+                onClick={handleConnectGmail}
+                disabled={isConnecting}
+                className="btn-primary text-[10px] sm:text-xs py-2 px-6 flex items-center transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+             >
+                {isConnecting ? (
+                   "Connecting..."
+                ) : (
+                   <>
+                      <svg className="w-3.5 h-3.5 mr-2 opacity-80" viewBox="0 0 24 24">
+                         <path fill="currentColor" d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.9 8.2,4.73 12.2,4.73C15.29,4.73 17.1,6.7 17.1,6.7L19,4.72C19,4.72 16.56,2 12.1,2C6.42,2 2.03,6.8 2.03,12C2.03,17.05 6.36,22 12.22,22C17.05,22 21.5,18.33 21.5,12.91C21.5,11.76 21.35,11.1 21.35,11.1V11.1Z" />
+                      </svg>
+                      Connect Gmail to Send
+                   </>
+                )}
+             </button>
+          ) : (
+             <button
+                onClick={() => handleApproveAndSend(activeMessage.id, activeThread.id)}
+                disabled={isSending}
+                className="btn-primary text-[10px] sm:text-xs py-2.5 px-6 flex items-center transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+             >
+                {isSending ? (
+                   <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Sending...
+                   </>
+                ) : (
+                   "Approve & Send via Gmail"
+                )}
+             </button>
+          )}
       </div>
     </div>
   );

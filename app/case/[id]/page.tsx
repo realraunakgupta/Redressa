@@ -10,6 +10,8 @@ import { RecommendationPanel } from "./panels/recommendation";
 import { GeneratedOutputsPanel } from "./panels/generated-outputs";
 import { EvidencePackPanel } from "./panels/evidence-pack";
 import { CommunicationPanel } from "./panels/communication";
+import { ResizableLayout } from "./panels/resizable-layout";
+import { DeleteClaimButton } from "./components/delete-claim-button";
 import { LeftRail } from "@/app/components/left-rail";
 import { TopNav } from "@/app/components/top-nav";
 import { MOCK_AVIATION_CASE, MOCK_ECOMMERCE_CASE } from "@/lib/mock-cases";
@@ -157,7 +159,7 @@ export default async function CasePage(props: PageProps<"/case/[id]">) {
         <LeftRail activePath="case" />
         
         {/* ── Case Content ── */}
-        <main className="flex-1 overflow-y-auto px-6 py-8">
+        <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 sm:py-8">
           <nav className="mb-8">
             <Link href="/" className="text-sm font-sans font-medium text-on-surface-muted hover:text-primary transition-colors flex items-center gap-2">
               <span>&larr;</span> Back to workspace
@@ -175,9 +177,12 @@ export default async function CasePage(props: PageProps<"/case/[id]">) {
                 </h1>
                 <p className="mt-3 line-clamp-2 text-base font-sans text-on-surface-muted max-w-3xl leading-relaxed">{caseRow.description}</p>
               </div>
-              <span className={`inline-flex shrink-0 items-center px-3 py-1.5 rounded-sm border border-[var(--color-border-solid)] ${status.bg}`}>
-                <span className={`text-xs font-sans font-medium uppercase tracking-widest ${status.text}`}>[ {status.label} ]</span>
-              </span>
+              <div className="flex flex-col items-end gap-3 shrink-0">
+                <span className={`inline-flex items-center px-3 py-1.5 rounded-sm border border-[var(--color-border-solid)] ${status.bg}`}>
+                  <span className={`text-xs font-sans font-medium uppercase tracking-widest ${status.text}`}>[ {status.label} ]</span>
+                </span>
+                <DeleteClaimButton caseId={caseRow.id} isDemo={caseRow.is_demo} />
+              </div>
             </div>
 
             <div className="mt-6 pt-5 border-t border-[var(--color-border-ghost)] flex flex-wrap gap-x-8 gap-y-3 text-sm font-sans text-on-surface-muted">
@@ -212,37 +217,42 @@ export default async function CasePage(props: PageProps<"/case/[id]">) {
           </div>
 
           {/* Panel Grid */}
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            <div className="space-y-6 lg:col-span-2">
-              <div id="extraction">
-                <ExtractedFactsPanel
-                  facts={facts as ExtractedFacts | null}
-                  timeline={mergedTimeline}
-                />
-              </div>
-              <div id="outputs">
-                <GeneratedOutputsPanel outputs={outputs as GeneratedOutputRow[]} />
-              </div>
-              <div id="documents">
-                <EvidencePackPanel outputs={outputs as GeneratedOutputRow[]} />
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <CommunicationPanel 
-                threads={threads as CommunicationThreadRow[]} 
-                messages={messages as OutboundMessageRow[]} 
-                inboundMessages={inboundMessages as InboundMessageRow[]}
-                hasGmail={hasGmail} 
-                caseId={caseRow.id} 
-              />
-              <RecommendationPanel
-                evaluation={evaluation as EvaluationResult | null}
-                routes={routes as EscalationRoute[] | null}
-              />
-              <AgentActivityPanel events={events} />
-              <CitationsPanel citations={allCitations} />
-            </div>
+          <div className="mt-8">
+            <ResizableLayout 
+              leftContent={
+                <div className="space-y-6">
+                  <div id="extraction">
+                    <ExtractedFactsPanel
+                      facts={facts as ExtractedFacts | null}
+                      timeline={mergedTimeline}
+                    />
+                  </div>
+                  <div id="outputs">
+                    <GeneratedOutputsPanel outputs={outputs as GeneratedOutputRow[]} />
+                  </div>
+                  <div id="documents">
+                    <EvidencePackPanel outputs={outputs as GeneratedOutputRow[]} />
+                  </div>
+                </div>
+              }
+              rightContent={
+                <div className="space-y-6">
+                  <CommunicationPanel 
+                    threads={threads as CommunicationThreadRow[]} 
+                    messages={messages as OutboundMessageRow[]} 
+                    inboundMessages={inboundMessages as InboundMessageRow[]}
+                    hasGmail={hasGmail} 
+                    caseId={caseRow.id} 
+                  />
+                  <RecommendationPanel
+                    evaluation={evaluation as EvaluationResult | null}
+                    routes={routes as EscalationRoute[] | null}
+                  />
+                  <AgentActivityPanel events={events} />
+                  <CitationsPanel citations={allCitations} />
+                </div>
+              }
+            />
           </div>
 
           {/* Legal Disclaimer */}

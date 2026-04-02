@@ -23,6 +23,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "message_id and thread_id are required" }, { status: 400 });
     }
 
+    // Demo Intercept: Never send real emails for fake IDs
+    if (thread_id.startsWith("demo-") || message_id.startsWith("demo-")) {
+      await new Promise(r => setTimeout(r, 1000));
+      return NextResponse.json({ success: true, messageId: `mock_email_${Date.now()}`, isDemo: true });
+    }
+
     // Safety constraints for overrides
     const validateOverride = (val: unknown, limit?: number) => {
        if (typeof val !== "string") return null;
@@ -132,25 +138,39 @@ export async function POST(request: NextRequest) {
     const sendResult = await sendResp.json();
 
     // 5. Update DB State
-    await updateMessageStatus(message.id, "sent", {
-       gmail_message_id: sendResult.id,
-       to_address: finalToAddress,
-       subject: finalSubject, // save exactly what was sent
-       body: finalBodyText,   // save exactly what was sent
-       sent_at: new Date().toISOString(),
-       approved_by: user.id, // we consider clicking send as approval
-       approved_at: new Date().toISOString()
-    });
+    try {
+      await updateMessageStatus(message.id, "sent", {
+         gmail_message_id: sendResult.id,
+         to_address: finalToAddress,
+         subject: finalSubject,
+         body: finalBodyText,
+         sent_at: new Date().toISOString(),
+         approved_by: user.id,
+         approved_at: new Date().toISOString()
+      });
+    } catch (dbErr) {
+       console.error("[Redressa] Error updating message status after send:", dbErr);
+       // We must fail here if we can't save status, otherwise we risk re-sending.
+       return NextResponse.json({ error: "Email sent, but failed to update status." }, { status: 500 });
+    }
 
-    await updateThreadState(thread_id, "sent", sendResult.threadId);
+    try {
+      await updateThreadState(thread_id, "sent", sendResult.threadId);
+    } catch (e) {
+      console.warn("[Redressa] Non-fatal error updating thread state:", e);
+    }
 
-    await addCaseEvent({
-        case_id: message.case_id,
-        event_type: "user_approved_send",
-        title: "User Approved Send",
-        detail: "User reviewed and dispatched the AI drafted message via their connected Gmail account.",
-        metadata: { messageId: sendResult.id, threadId: sendResult.threadId }
-    });
+    try {
+      await addCaseEvent({
+          case_id: message.case_id,
+          event_type: "user_approved_send",
+          title: "User Approved Send",
+          detail: "User reviewed and dispatched the AI drafted message via their connected Gmail account.",
+          metadata: { messageId: sendResult.id, threadId: sendResult.threadId }
+      });
+    } catch (e) {
+      console.warn("[Redressa] Non-fatal error adding case event:", e);
+    }
 
     return NextResponse.json({ success: true, messageId: sendResult.id });
   } catch (error) {

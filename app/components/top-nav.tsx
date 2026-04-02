@@ -55,12 +55,21 @@ export function TopNav() {
             <>
               {user ? (
                 <div className="flex items-center gap-4">
-                  <span className="text-sm text-on-surface-muted hidden sm:inline-block truncate max-w-[200px]" title={user.email}>
-                    {user.user_metadata?.full_name || user.email}
-                  </span>
+                  <Link
+                    href="/profile"
+                    className="text-sm font-medium text-on-surface-muted hover:text-primary transition-colors flex items-center gap-2"
+                    aria-label="Open profile"
+                  >
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--color-border-solid)] bg-surface-low text-xs font-serif font-medium text-primary">
+                      {(user.user_metadata?.full_name || user.email || "R").toString().trim().charAt(0).toUpperCase()}
+                    </span>
+                    <span className="hidden sm:inline-block max-w-[160px] truncate" title={user.email}>
+                      {user.user_metadata?.full_name || user.email}
+                    </span>
+                  </Link>
                   <button
                     onClick={handleSignOut}
-                    className="text-sm font-medium text-on-surface-muted hover:text-on-base transition-colors"
+                    className="text-sm font-medium text-on-surface-muted hover:text-on-base transition-colors ml-2"
                   >
                     Sign Out
                   </button>

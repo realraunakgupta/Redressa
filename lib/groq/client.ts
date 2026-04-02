@@ -93,6 +93,8 @@ async function groqFetch(payload: Record<string, unknown>, maxRetries = 3) {
          } else {
             errorText = `Groq failed, and Gemini Fallback also failed: ${await geminiResp.text()}`;
          }
+      } else if (!geminiKey && (response.status === 413 || response.status === 429 || errorText.toLowerCase().includes("too large") || errorText.toLowerCase().includes("limit reached"))) {
+         console.warn("[Redressa] Groq rate limit hit, but NO Gemini fallback available (GEMINI_API_KEY is missing from environment variables).");
       }
 
       // If not 429 or out of retries, parse hard error

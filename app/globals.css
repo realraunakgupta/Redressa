@@ -49,6 +49,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-primary-text);
+}
+
 /* Document Scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--color-base); }

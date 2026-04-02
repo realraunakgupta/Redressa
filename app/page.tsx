@@ -2,9 +2,9 @@ import Link from "next/link";
 import { listCases } from "@/lib/supabase";
 import { cookies } from "next/headers";
 import { createSupabaseServerAuthClient } from "@/lib/supabase/auth";
-import { GlassmorphicBackground } from "./components/glassmorphic-bg";
 import { HeroSection } from "./components/hero-section";
 import { TopNav } from "./components/top-nav";
+import { Footer } from "./components/footer";
 
 export const dynamic = "force-dynamic";
 
@@ -31,9 +31,7 @@ export default async function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative">
-      <GlassmorphicBackground />
-
+    <div className="min-h-screen flex flex-col relative bg-base">
       <TopNav />
 
       {/* ── Workspace Hero ── */}
@@ -133,36 +131,7 @@ export default async function HomePage() {
       </main>
 
       {/* ── Footer ── */}
-      <footer className="relative z-10 border-t border-[var(--color-border-solid)] bg-base">
-        <div className="mx-auto max-w-7xl px-6 py-12">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <p className="text-xl font-serif font-medium text-on-base">Redressa</p>
-              <p className="mt-2 text-sm font-sans text-on-surface-muted">
-                Consumer redressal workflow for India.
-              </p>
-            </div>
-            <div className="flex flex-col sm:items-end gap-y-2 text-sm font-sans text-on-surface-muted">
-              <Link href="/status" className="hover:text-on-base transition-colors py-1">
-                System Status
-              </Link>
-              <span className="py-1">Built for Protex Hack-2-Win 2026</span>
-              <a
-                href="https://github.com/realraunakgupta/Redressa"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-neutral-300 transition-colors"
-              >
-                GitHub
-              </a>
-            </div>
-          </div>
-          <p className="mt-4 text-xs text-neutral-600">
-            This tool provides informational guidance only and does not constitute legal advice.
-            Always consult qualified professionals for legal matters.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

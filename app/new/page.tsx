@@ -195,7 +195,7 @@ export default function NewClaimPage() {
       <div className="mx-auto flex w-full max-w-7xl flex-1 items-stretch overflow-hidden">
         <LeftRail activePath="new" />
         
-        <main className="flex-1 overflow-y-auto px-6 py-8">
+        <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 sm:py-8">
           <div className="mx-auto max-w-2xl">
             <nav className="mb-8">
               <Link href="/" className="text-sm font-sans font-medium text-on-surface-muted hover:text-primary transition-colors flex items-center gap-2">
@@ -288,7 +288,7 @@ export default function NewClaimPage() {
                     type="tel"
                     value={consumerPhone}
                     onChange={(e) => setConsumerPhone(e.target.value)}
-                    placeholder="+91 98765 43210"
+                    placeholder="e.g. +91 00000 00000"
                     className="input-editorial w-full py-3 mt-2 text-base"
                   />
                 </div>

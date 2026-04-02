@@ -16,47 +16,51 @@ const fadeUp = {
   }),
 };
 
+const trustChips = [
+  "DGCA & Policy Cited",
+  "Aviation & E-Commerce",
+  "Evidence-Grade Output",
+];
+
 export function HeroSection() {
   return (
     <div className="max-w-2xl">
-      {/* Eyebrow label */}
       <motion.p
         custom={0}
         initial="hidden"
         animate="visible"
         variants={fadeUp}
-        className="text-xs font-sans font-semibold uppercase tracking-widest text-[#C5B358] mb-4"
+        className="mb-4 text-xs font-sans font-semibold uppercase tracking-widest text-[#C5B358]"
       >
         Consumer Redressal
       </motion.p>
 
-      {/* H1 */}
       <motion.h1
         custom={0.1}
         initial="hidden"
         animate="visible"
         variants={fadeUp}
-        className="text-5xl sm:text-6xl font-serif font-medium tracking-tight text-on-base leading-tight"
+        className="text-5xl font-serif font-medium leading-tight tracking-tight text-on-base sm:text-6xl"
       >
-        Your Evidence.<br/>
-        <span className="text-primary tracking-normal italic">AI-Verified.</span> Case-Ready.
+        Your Evidence.
+        <br />
+        <span className="text-primary italic tracking-normal">AI-Verified.</span>{" "}
+        Case-Ready.
       </motion.h1>
 
-      {/* Body copy */}
       <motion.p
         custom={0.22}
         initial="hidden"
         animate="visible"
         variants={fadeUp}
-        className="mt-6 text-lg font-sans text-on-surface-muted leading-relaxed max-w-xl"
+        className="mt-6 max-w-xl text-lg font-sans leading-relaxed text-on-surface-muted"
       >
         Turn messy complaint evidence into grounded, escalation-ready claim
-        packages. Upload your evidence, and the pipeline will extract
-        facts, retrieve relevant policies, evaluate your position, and generate
+        packages. Upload your evidence, and the pipeline will extract facts,
+        retrieve relevant policies, evaluate your position, and generate
         action-ready outputs.
       </motion.p>
 
-      {/* CTA */}
       <motion.div
         custom={0.34}
         initial="hidden"
@@ -64,12 +68,11 @@ export function HeroSection() {
         variants={fadeUp}
         className="mt-8 flex items-center gap-4"
       >
-        <Link href="/new" className="btn-primary text-base px-6 py-3">
+        <Link href="/new" className="btn-primary px-6 py-3 text-base">
           Start New Claim
         </Link>
       </motion.div>
 
-      {/* Trust indicator chips */}
       <motion.div
         custom={0.46}
         initial="hidden"
@@ -77,11 +80,7 @@ export function HeroSection() {
         variants={fadeUp}
         className="mt-8 flex flex-wrap gap-3"
       >
-        {[
-          "⚖ DGCA § 8.3 Cited",
-          "✈ Aviation & E-Commerce",
-          "🔒 Evidence-Grade Output",
-        ].map((chip) => (
+        {trustChips.map((chip) => (
           <span
             key={chip}
             className="inline-flex items-center rounded-sm border border-[var(--color-border-ghost)] bg-surface-low px-3 py-1.5 text-xs font-sans font-medium text-on-surface-muted"
@@ -96,7 +95,7 @@ export function HeroSection() {
         initial="hidden"
         animate="visible"
         variants={fadeUp}
-        className="mt-6 text-xs font-sans text-on-surface-muted/50 uppercase tracking-wider"
+        className="mt-6 text-xs font-sans uppercase tracking-wider text-on-surface-muted/50"
       >
         Guidance workflow, not legal advice.
       </motion.p>
