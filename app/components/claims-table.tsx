@@ -196,7 +196,7 @@ export function ClaimsTable({ cases }: { cases: ClaimRow[] }) {
                         className={`accent-[var(--color-primary)] h-3.5 w-3.5 cursor-pointer rounded-sm transition-opacity ${
                           isSelected
                             ? "opacity-100"
-                            : "opacity-0 group-hover:opacity-100"
+                            : "opacity-100 md:opacity-0 md:group-hover:opacity-100"
                         }`}
                       />
                     ) : null}
@@ -249,7 +249,7 @@ export function ClaimsTable({ cases }: { cases: ClaimRow[] }) {
                           }
                         }}
                         disabled={deleting}
-                        className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity text-on-surface-muted/40 hover:text-[var(--color-error)] p-1 rounded-sm"
+                        className="opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100 transition-opacity text-on-surface-muted/40 hover:text-[var(--color-error)] p-1 rounded-sm"
                         title="Delete this claim"
                         aria-label="Delete claim"
                       >
