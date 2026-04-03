@@ -251,8 +251,8 @@ export function CommunicationPanel({ threads, messages, inboundMessages, hasGmai
 
   return (
     <div className="rounded-sm border border-[var(--color-border-solid)] bg-surface p-6 sm:p-8 shadow-sm overflow-hidden relative mt-8">
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between mb-6 border-b border-[var(--color-border-ghost)] pb-4 gap-4">
-        <div className="flex-1 min-w-0 pr-4">
+      <div className="mb-6 border-b border-[var(--color-border-ghost)] pb-4 space-y-4">
+        <div className="min-w-0">
           <h2 className="text-sm font-serif font-bold uppercase tracking-widest text-primary truncate">Communication & Escalation</h2>
           <p className="text-[10px] font-sans font-medium uppercase tracking-wider text-on-surface-muted/60 mt-1 truncate">
             {isSent 
@@ -260,7 +260,7 @@ export function CommunicationPanel({ threads, messages, inboundMessages, hasGmai
                : `Ready to escalate to ${activeThread.target_name}`}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2">
             {isSent && hasGmail && !activeThread.id.startsWith("demo-") && (
                <button 
                   onClick={() => handleSyncReplies(activeThread.id)}

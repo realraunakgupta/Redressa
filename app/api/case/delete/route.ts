@@ -38,6 +38,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "You can only delete your own cases." }, { status: 403 });
     }
 
+    // ── Service role client (bypasses RLS for storage + delete) ──
+    const serviceClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
     // ── Clean up uploaded evidence from Supabase Storage ──
     // Fetch file paths before cascade-deleting the DB rows
     const { data: caseFiles } = await supabase
@@ -51,24 +57,18 @@ export async function POST(req: Request) {
         .filter((p: string) => p && !p.startsWith("demo/"));
 
       if (storagePaths.length > 0) {
-        // Use service role client for storage operations (browser auth client may lack permissions)
-        const serviceClient = createClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.SUPABASE_SERVICE_ROLE_KEY!
-        );
         const { error: storageError } = await serviceClient.storage
           .from("evidence")
           .remove(storagePaths);
 
         if (storageError) {
           console.warn("Storage cleanup warning (non-fatal):", storageError.message);
-          // Non-fatal: proceed with DB deletion even if storage cleanup fails
         }
       }
     }
 
     // ── Delete the case row (cascades to all child tables) ──
-    const { error: deleteError } = await supabase
+    const { error: deleteError } = await serviceClient
       .from("cases")
       .delete()
       .eq("id", case_id)

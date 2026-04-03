@@ -1,3 +1,7 @@
+"use client";
+
+import { TeamModal } from "./team-modal";
+
 export function Footer() {
   return (
     <footer className="relative z-10 mx-auto mt-auto flex w-full max-w-7xl flex-col gap-8 border-t border-[var(--color-border-ghost)] px-6 pb-10 pt-20 sm:px-10">
@@ -30,14 +34,6 @@ export function Footer() {
               Contact Us
             </span>
             <a
-              href="https://redressa.vercel.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm font-sans text-on-surface-muted transition-colors hover:text-on-base"
-            >
-              Live Demo
-            </a>
-            <a
               href="mailto:guptaraunak@proton.me"
               className="text-sm font-sans text-on-surface-muted transition-colors hover:text-on-base"
             >
@@ -51,9 +47,7 @@ export function Footer() {
         <p className="text-sm tracking-wide text-on-surface-muted">
           © 2026 Redressa. Authority in Resolution.
         </p>
-        <p className="text-sm italic tracking-wide text-on-surface-muted/60">
-          Built by the Redressa team
-        </p>
+        <TeamModal />
       </div>
     </footer>
   );

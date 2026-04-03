@@ -5,6 +5,7 @@ import { createSupabaseServerAuthClient } from "@/lib/supabase/auth";
 import { HeroSection } from "./components/hero-section";
 import { TopNav } from "./components/top-nav";
 import { Footer } from "./components/footer";
+import { ClaimsTable } from "./components/claims-table";
 
 export const dynamic = "force-dynamic";
 
@@ -21,14 +22,6 @@ export default async function HomePage() {
       // Supabase may not be configured yet
     }
   }
-
-  const statusStyle: Record<string, { label: string; dot: string; text: string }> = {
-    intake: { label: "Intake", dot: "bg-neutral-400", text: "text-neutral-400" },
-    processing: { label: "Processing", dot: "bg-accent-400", text: "text-accent-400" },
-    evaluated: { label: "Evaluated", dot: "bg-primary-400", text: "text-primary-400" },
-    complete: { label: "Complete", dot: "bg-success-500", text: "text-success-500" },
-    error: { label: "Error", dot: "bg-error-500", text: "text-error-500" },
-  };
 
   return (
     <div className="min-h-screen flex flex-col relative bg-base">
@@ -66,64 +59,17 @@ export default async function HomePage() {
                 </p>
               </div>
             ) : (
-              <div className="mt-6 overflow-hidden rounded-sm border border-[var(--color-border-solid)] bg-base">
-                <table className="w-full text-sm font-sans">
-                  <thead>
-                    <tr className="border-b border-[var(--color-border-solid)] bg-surface-low">
-                      <th className="px-6 py-4 text-left text-xs font-medium uppercase text-on-surface-muted tracking-widest">
-                        Claim
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium uppercase text-on-surface-muted tracking-widest hidden sm:table-cell">
-                        Category
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium uppercase text-on-surface-muted tracking-widest hidden md:table-cell">
-                        Filed
-                      </th>
-                      <th className="px-6 py-4 text-right text-xs font-medium uppercase text-on-surface-muted tracking-widest">
-                        Status
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--color-border-solid)]">
-                    {recentCases.map((c) => {
-                      const s = statusStyle[c.status] ?? statusStyle.intake;
-                      return (
-                        <tr key={c.id} className="hover:bg-surface-low transition-colors group cursor-pointer">
-                          <td className="px-6 py-4">
-                            <Link href={`/case/${c.id}`} className="block">
-                              <p className="font-serif font-medium text-lg text-on-base truncate max-w-md group-hover:text-primary transition-colors">
-                                {c.merchant_name ?? "Complaint"} —{" "}
-                                {c.subcategory?.replace(/_/g, " ") ?? "General"}
-                              </p>
-                              <p className="mt-1.5 text-sm text-on-surface-muted truncate max-w-md">
-                                {c.description.slice(0, 80)}
-                                {c.description.length > 80 ? "…" : ""}
-                              </p>
-                            </Link>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-on-surface-muted capitalize hidden sm:table-cell">
-                            {c.category ?? "—"}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-on-surface-muted hidden md:table-cell">
-                            {new Date(c.created_at).toLocaleString("en-IN", {
-                              day: "numeric",
-                              month: "short",
-                              timeZone: "Asia/Kolkata",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <span className="inline-flex items-center gap-1.5">
-                              <span className={`inline-block h-1.5 w-1.5 rounded-full ${s.dot}`} />
-                              <span className={`text-xs font-medium ${s.text}`}>{s.label}</span>
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+              <div className="mt-6">
+                <ClaimsTable cases={recentCases.map(c => ({
+                  id: c.id,
+                  status: c.status,
+                  category: c.category,
+                  subcategory: c.subcategory,
+                  description: c.description,
+                  merchant_name: c.merchant_name,
+                  is_demo: c.is_demo,
+                  created_at: c.created_at,
+                }))} />
               </div>
             )}
           </section>

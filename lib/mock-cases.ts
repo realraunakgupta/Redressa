@@ -98,7 +98,7 @@ export const MOCK_AVIATION_CASE = {
       target_name: "IndiGo Grievance Nodal Officer",
       rationale: "Direct airline escalation to bypass tier-1 support.",
       target: "nodal",
-      contact_info: "test-nodal@example.com",
+      contact_info: "nodalofficer@goindigo.in",
       priority: "high"
     },
     {
@@ -141,7 +141,7 @@ export const MOCK_AVIATION_CASE = {
       state: "draft",
       automation_mode: "assisted",
       escalation_target: "nodal",
-      target_email: "test-nodal@example.com",
+      target_email: "nodalofficer@goindigo.in",
       target_name: "IndiGo Grievance Nodal Officer",
       gmail_thread_id: null,
       created_at: new Date().toISOString(),
@@ -157,7 +157,7 @@ export const MOCK_AVIATION_CASE = {
       subject: "Urgent: Failure to Refund for Last-Minute Cancellation - PNR-WXY789",
       body: "Dear Nodal Officer, IndiGo,\n\nI am writing to formally escalate the failure of IndiGo to refund INR 8500 for my cancelled flight 6E-401 from Delhi to Mumbai, originally scheduled for May 15. The flight was cancelled less than 2 hours before departure while I was waiting at the boarding gate.\n\nUnder the DGCA CAR Section 3 Series M Part IV, as well as IndiGo's own Conditions of Carriage, I am entitled to a full refund within 15 days if a flight is cancelled and the passenger opts not to travel on a re-booked flight. Over 20 days have passed, and despite multiple calls to your customer service team, the refund is \"still processing.\"\n\nI request an immediate transfer of INR 8500 to my original payment source, along with the specified inconvenience compensation mandated by DGCA for last-minute cancellations without 24-hour notice.\n\nI expect a resolution within 48 hours to avoid escalation to the AirSewa grievance portal.\n\nRegards,\n[Your Name]",
       from_address: "consumer@example.com",
-      to_address: "test-nodal@example.com",
+      to_address: "nodalofficer@goindigo.in",
       status: "draft",
       generation_source: "pipeline",
       gmail_message_id: null,
@@ -268,7 +268,7 @@ export const MOCK_ECOMMERCE_CASE = {
       target_name: "Flipkart Grievance Officer",
       rationale: "Escalate past the tier-1 chat support directly to the nodal officer.",
       target: "nodal",
-      contact_info: "test-grievance.officer@example.com",
+      contact_info: "grievance.officer@flipkart.com",
       priority: "high"
     },
     {
@@ -311,7 +311,7 @@ export const MOCK_ECOMMERCE_CASE = {
       state: "draft",
       automation_mode: "autopilot",
       escalation_target: "nodal",
-      target_email: "test-grievance.officer@example.com",
+      target_email: "grievance.officer@flipkart.com",
       target_name: "Flipkart Grievance Officer",
       gmail_thread_id: null,
       created_at: new Date().toISOString(),
@@ -327,7 +327,7 @@ export const MOCK_ECOMMERCE_CASE = {
       subject: "Urgent: Unjustified Return Rejection for Shattered Laptop - OD1122334455",
       body: "Dear Grievance Officer, Flipkart,\n\nI received my order (OD1122334455) for a laptop three days ago. Upon unboxing, the display was completely shattered. Despite immediately uploading an unboxing video as irrefutable proof of DOA (Dead on Arrival) state, the seller rejected my return claim within the 7-day window citing \"post-delivery damage.\"\n\nUnder the Consumer Protection (E-Commerce) Rules, 2020, specifically Section 5(2), an e-commerce entity is obligated to ensure goods match their description and are defect-free. An unboxing video legally establishes the defect was present at the point of delivery.\n\nI request an immediate reversal of the seller's rejection and an automated pickup of the damaged unit followed by a full refund or replacement. If unresolved within 48 hours, I will formally escalate this to the National Consumer Helpline (NCH).\n\nRegards,\n[Your Name]",
       from_address: "consumer@example.com",
-      to_address: "test-grievance.officer@example.com",
+      to_address: "grievance.officer@flipkart.com",
       status: "draft",
       generation_source: "pipeline",
       gmail_message_id: null,
