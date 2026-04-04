@@ -146,3 +146,7 @@ Quick version:
 
 - [DEPLOYMENT.md](DEPLOYMENT.md) – Deployment guide
 - [VALIDATION.md](VALIDATION.md) – Problem validation and track fit
+
+<p align="center">
+  Made with ❤️ by <strong>Team Yin & Yang</strong> for <strong>Protex Hack-2-Win 2026</strong>
+</p>
