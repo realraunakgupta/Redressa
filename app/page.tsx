@@ -17,7 +17,7 @@ export default async function HomePage() {
   let recentCases: Awaited<ReturnType<typeof listCases>> = [];
   if (user) {
     try {
-      recentCases = await listCases({ limit: 8, userId: user.id });
+      recentCases = await listCases({ userId: user.id });
     } catch {
       // Supabase may not be configured yet
     }
