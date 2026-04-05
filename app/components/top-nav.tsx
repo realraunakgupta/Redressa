@@ -60,9 +60,20 @@ export function TopNav() {
                     className="text-sm font-medium text-on-surface-muted hover:text-primary transition-colors flex items-center gap-2"
                     aria-label="Open profile"
                   >
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--color-border-solid)] bg-surface-low text-xs font-serif font-medium text-primary">
-                      {(user.user_metadata?.full_name || user.email || "R").toString().trim().charAt(0).toUpperCase()}
-                    </span>
+                    {user.user_metadata?.avatar_url ? (
+                      <img
+                        src={user.user_metadata.avatar_url}
+                        alt=""
+                        referrerPolicy="no-referrer"
+                        className="h-8 w-8 rounded-full border border-[var(--color-border-solid)] object-cover"
+                      />
+                    ) : (
+                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--color-border-solid)] bg-surface-low text-on-surface-muted">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+                          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v1.2c0 .66.54 1.2 1.2 1.2h16.8c.66 0 1.2-.54 1.2-1.2v-1.2c0-3.2-6.4-4.8-9.6-4.8z"/>
+                        </svg>
+                      </span>
+                    )}
                     <span className="hidden sm:inline-block max-w-[160px] truncate" title={user.email}>
                       {user.user_metadata?.full_name || user.email}
                     </span>
