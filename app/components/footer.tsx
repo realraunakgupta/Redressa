@@ -1,7 +1,5 @@
 "use client";
 
-import { TeamModal } from "./team-modal";
-
 export function Footer() {
   return (
     <footer className="relative z-10 mx-auto mt-auto flex w-full max-w-7xl flex-col gap-8 border-t border-[var(--color-border-ghost)] px-6 pb-10 pt-20 sm:px-10">
@@ -47,7 +45,6 @@ export function Footer() {
         <p className="text-sm tracking-wide text-on-surface-muted">
           © 2026 Redressa. Authority in Resolution.
         </p>
-        <TeamModal />
       </div>
     </footer>
   );

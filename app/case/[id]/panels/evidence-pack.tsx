@@ -58,7 +58,7 @@ export function EvidencePackPanel({ outputs }: { outputs: GeneratedOutputRow[] }
         y += 14; 
       }
       
-      doc.save(`evidence-pack-protex.pdf`);
+      doc.save(`evidence-pack.pdf`);
     } catch (err) {
       console.error("[jsPDF Error]", err);
     } finally {

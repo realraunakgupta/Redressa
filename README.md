@@ -2,9 +2,6 @@
 
 > Agentic workflow that turns messy consumer complaint evidence into grounded, escalation-ready claim packages.
 
-**Hackathon**: Protex Hack-2-Win 2026  
-**Track**: Track 2 – Agentic AI / AI Workflows
-
 ## Stack
 
 | Layer | Tech |
@@ -146,7 +143,3 @@ Quick version:
 
 - [DEPLOYMENT.md](DEPLOYMENT.md) – Deployment guide
 - [VALIDATION.md](VALIDATION.md) – Problem validation and track fit
-
-<p align="center">
-  Made with ❤️ by <strong>Team Yin & Yang</strong> for <strong>Protex Hack-2-Win 2026</strong>
-</p>
